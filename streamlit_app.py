@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import networkx as nx
 from pyvis.network import Network as PyvisNetwork
+import re # Added import
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import math
@@ -57,7 +58,7 @@ def cargar_y_limpiar_csv(filepath):
             
             # Normalize various newline representations to '\\n', then split.
             # Handles \\r\\n (as a literal string), \\r\\n (CRLF chars), \\n (LF char), \\r (CR char).
-            normalized_items_text = items_part.strip().replace("\\\\r\\\\n", "\\n").replace("\\r\\n", "\\n").replace("\\r", "\\n")
+            normalized_items_text = items_part.strip().replace("\\\\r\\\\n", "\\n").replace("\\r\\n", "\\n").replace("\\n", "<br>").replace("\\r", "<br>")
             items_list_raw = [item.strip() for item in normalized_items_text.split('\\n') if item.strip()]
 
             formatted_items = []
