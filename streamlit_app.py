@@ -5,6 +5,8 @@ from pyvis.network import Network as PyvisNetwork
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import math
+import tempfile # Added import
+import os # Added import
 
 # --- Definiciones Globales y Constantes ---
 DATA_FILE = 'ponderaciones_andalucia.csv' # Asegúrate que este archivo está en el mismo directorio
@@ -26,38 +28,85 @@ RELACIONES_1_A_2 = {
 
 def cargar_y_limpiar_csv(filepath):
     try:
+        # Try with utf-8 first
         df = pd.read_csv(filepath, encoding='utf-8', on_bad_lines='skip')
     except FileNotFoundError:
         st.error(f"Error: No se encontró el archivo '{filepath}'. Asegúrate de que el archivo 'ponderaciones_andalucia.csv' está en el mismo directorio que la aplicación.")
-        return None
+        return None, ""
     except UnicodeDecodeError:
         st.warning("Error de decodificación UTF-8. Probando con 'latin1' como alternativa.")
         try:
             df = pd.read_csv(filepath, encoding='latin1', on_bad_lines='skip')
         except Exception as e:
             st.error(f"Error al cargar con Latin1: {e}")
-            return None
+            return None, ""
 
     if df.empty:
         st.error("El archivo CSV está vacío o no se pudo cargar correctamente.")
-        return None
+        return None, ""
+
+    legend_text_display = ""
+    if not df.empty:
+        first_col_name = df.columns[0]
+        if isinstance(first_col_name, str) and "Ramas de Conocimiento:" in first_col_name:
+            legend_content_full = first_col_name
+            # The legend is part of the first column name, ending before "Grados"
+            legend_actual_content = legend_content_full.split("Grados")[0].strip()
+            
+            title_part, items_part = legend_actual_content.split(":", 1)
+            title = title_part.strip() + ":"
+            
+            # Items are separated by \r\n in the string
+            items_list_raw = items_part.strip().split("\\r\\n") # Use escaped backslash for literal \r\n
+            if len(items_list_raw) == 1 and '\r\n' in items_list_raw[0]: # If splitting by \\r\\n failed, try \r\n
+                items_list_raw = items_part.strip().split("\r\n")
+
+            formatted_items = []
+            for item_line in items_list_raw:
+                item_line_cleaned = item_line.strip()
+                if ":" in item_line_cleaned:
+                    abbrev, desc = item_line_cleaned.split(":", 1)
+                    formatted_items.append(f"- **{abbrev.strip()}**: {desc.strip()}")
+                elif item_line_cleaned: # Non-empty line without colon
+                    formatted_items.append(f"- {item_line_cleaned}")
+            
+            if formatted_items:
+                legend_text_display = f"**{title}**\n" + "\n".join(formatted_items)
+            else: # Fallback if parsing was difficult
+                legend_text_display = f"**Leyenda Ramas:**\n{items_part.strip().replace(chr(10), '<br>').replace(chr(13), '')}"
+
 
     df.rename(columns={df.columns[0]: 'Grado'}, inplace=True)
     
-    # Comprobar si 'Rama de conocimiento' existe antes de dropear NA
     if 'Rama de conocimiento' in df.columns:
         df = df.dropna(subset=['Rama de conocimiento'])
     else:
         st.error("La columna 'Rama de conocimiento' no se encuentra en el CSV. Verifica el formato del archivo.")
-        return None
+        return None, legend_text_display
         
     df = df[~df['Grado'].str.contains("Pondera|No pondera|This work", case=False, na=False)]
     
     nuevas_columnas = {col: col.strip().replace(' ', '_').replace('-', '_') for col in df.columns}
     df.rename(columns=nuevas_columnas, inplace=True)
+
+    # Handle "IyA+C" by duplicating rows
+    rama_col_name = 'Rama_de_conocimiento' # After potential rename by nuevas_columnas
+    if rama_col_name in df.columns:
+        new_rows = []
+        for _, row in df.iterrows():
+            if row[rama_col_name] == 'IyA+C':
+                row_iya = row.copy()
+                row_iya[rama_col_name] = 'Ingeniería y Arquitectura'
+                new_rows.append(row_iya)
+                
+                row_c = row.copy()
+                row_c[rama_col_name] = 'Ciencias'
+                new_rows.append(row_c)
+            else:
+                new_rows.append(row)
+        df = pd.DataFrame(new_rows).reset_index(drop=True)
     
-    # Asumiendo que las ponderaciones empiezan desde la tercera columna ('Grado', 'Rama_de_conocimiento', luego asignaturas)
-    columnas_asignaturas = [col for col in df.columns if col not in ['Grado', 'Rama_de_conocimiento']]
+    columnas_asignaturas = [col for col in df.columns if col not in ['Grado', rama_col_name]]
 
     for col in columnas_asignaturas:
         if df[col].dtype == 'object':
@@ -65,7 +114,7 @@ def cargar_y_limpiar_csv(filepath):
         df[col] = pd.to_numeric(df[col], errors='coerce')
 
     df.fillna(0.0, inplace=True)
-    return df
+    return df, legend_text_display
 
 def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_ponderacion_015=False, alto_px=800, ancho_px=1000, selected_node_id=None):
     """
@@ -251,9 +300,10 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
                 weight=edge_width, 
                 width=edge_width,
                 title=edge_title, 
-                label=f"{ponderacion:.2f}",
+                # label=f"{ponderacion:.2f}", # REMOVED to hide text on edges
                 arrows={'to': {'enabled': True, 'scaleFactor': 0.8}},
-                smooth={'type': 'straightCross', 'forceDirection': 'horizontal'},                physics=False
+                smooth={'type': 'straightCross', 'forceDirection': 'horizontal'},                
+                physics=False
             )
 
     # --- Visualización con Pyvis ---
@@ -374,15 +424,23 @@ st.set_page_config(page_title="Visor Ponderaciones Selectividad Andalucía", lay
 
 st.title("📊 Visor Interactivo de Ponderaciones para Selectividad (Andalucía)")
 st.markdown("""
+
+
 Bienvenido al visor de ponderaciones. Explora cómo las asignaturas de bachillerato
 ponderan para los grados universitarios en Andalucía.
 """)
 
 # --- Carga de datos ---
 # DATA_FILE ya está definido globalmente
-df_ponderaciones_original = cargar_y_limpiar_csv(DATA_FILE)
+# df_ponderaciones_original = cargar_y_limpiar_csv(DATA_FILE) # Old call
+df_ponderaciones_original, leyenda_ramas = cargar_y_limpiar_csv(DATA_FILE) # New call
 
 if df_ponderaciones_original is not None:
+    if leyenda_ramas:
+        st.sidebar.markdown("---")
+        st.sidebar.markdown(leyenda_ramas, unsafe_allow_html=True)
+        st.sidebar.markdown("---")
+
     st.sidebar.header("🛠️ Opciones de Visualización")
     
     # Nombres de ramas directamente del CSV (ya son descriptivos)
@@ -507,6 +565,8 @@ if df_ponderaciones_original is not None:
     elif modo_visualizacion == 'Gráfico Interactivo de Flujo':
         st.subheader("🌊 Gráfico de Flujo Académico Interactivo")
         st.markdown("""
+
+
         Selecciona una **Rama de Conocimiento**. El gráfico mostrará las conexiones con ponderación 0.2.
         Puedes optar por incluir también las de 0.15. Haz clic y arrastra los nodos para reorganizar.
         """)
