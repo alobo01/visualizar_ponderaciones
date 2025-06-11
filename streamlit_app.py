@@ -227,7 +227,7 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
     options_json = """
     {
       "physics": {
-        "enabled": true,
+        "enabled": false, // Ensure physics is disabled for a fixed plot
         "barnesHut": {
           "gravitationalConstant": -3000,
           "centralGravity": 0.1,
@@ -241,11 +241,16 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
       },
       "layout": {
         "hierarchical": {
-          "enabled": false
+          "enabled": true,
+          "direction": "LR",
+          "sortMethod": "directed",
+          "levelSeparation": 200,
+          "nodeSpacing": 150,
+          "treeSpacing": 250
         }
       },
       "interaction":{
-        "dragNodes": true,
+        "dragNodes": false, // Disable node dragging
         "dragView": true,
         "zoomView": true,
         "tooltipDelay": 200,
