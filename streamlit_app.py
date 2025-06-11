@@ -146,135 +146,216 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
         for k,v in RELACIONES_1_A_2.items(): # Usar la variable global
             if selected_node_id in v:
                 asignaturas_1_bach_filtradas.append(k)
+    # Añadir nodos con atributos optimizados para layout jerárquico (Sugiyama framework)
+    # Capa 1: 1º Bachillerato (nivel 0)
+    for i, nodo_1 in enumerate(sorted(asignaturas_1_bach_filtradas)):
+        G.add_node(
+            nodo_1, 
+            level=0,  # Explicit level for hierarchical layout
+            layer=1, 
+            color='#E6E6FA', 
+            title=nodo_1.replace('_', ' '), 
+            shape='box', 
+            type='1_bach',
+            x=None,  # Let hierarchical layout determine position
+            y=i * 100,  # Vertical spacing hint
+            fixed=False,
+            physics=False
+        )
 
-
-    # Añadir nodos con atributos para Pyvis (capa, color, tamaño, título)
-    # Capa 1: 1º Bachillerato
-    for nodo_1 in asignaturas_1_bach_filtradas:
-        G.add_node(nodo_1, layer=1, color='#E6E6FA', title=nodo_1.replace('_', ' '), shape='box', type='1_bach')
-
-    # Capa 2: 2º Bachillerato
+    # Capa 2: 2º Bachillerato (nivel 1)
     if asignaturas_2_activas:
         cmap = plt.cm.get_cmap('tab20', len(asignaturas_2_activas))
         color_map_2_bach = {asig: mcolors.to_hex(cmap(i)) for i, asig in enumerate(asignaturas_2_activas)}
     else:
         color_map_2_bach = {}
 
-    for nodo_2 in asignaturas_2_activas:
+    for i, nodo_2 in enumerate(sorted(asignaturas_2_activas)):
         color = color_map_2_bach.get(nodo_2, '#D3D3D3')
-        G.add_node(nodo_2, layer=2, color=color + 'BF', title=nodo_2.replace('_', ' '), shape='box', type='2_bach')
+        G.add_node(
+            nodo_2, 
+            level=1,  # Explicit level for hierarchical layout
+            layer=2, 
+            color=color + 'BF', 
+            title=nodo_2.replace('_', ' '), 
+            shape='box', 
+            type='2_bach',
+            x=None,  # Let hierarchical layout determine position
+            y=i * 80,  # Vertical spacing hint
+            fixed=False,
+            physics=False
+        )
 
-    # Capa 3: Grados Universitarios
-    grados_en_df = df_data['Grado'].unique()
-    for grado_uni in grados_en_df:
-        G.add_node(grado_uni, layer=3, color='#FFDAB9', title=grado_uni, shape='box', type='grado')
-
-    # Conexiones 1º Bach -> 2º Bach
+    # Capa 3: Grados Universitarios (nivel 2)
+    grados_en_df = sorted(df_data['Grado'].unique())
+    for i, grado_uni in enumerate(grados_en_df):
+        G.add_node(
+            grado_uni, 
+            level=2,  # Explicit level for hierarchical layout
+            layer=3, 
+            color='#FFDAB9', 
+            title=grado_uni, 
+            shape='box', 
+            type='grado',
+            x=None,  # Let hierarchical layout determine position
+            y=i * 60,  # Vertical spacing hint, more compact for many nodes
+            fixed=False,
+            physics=False
+        )    # Conexiones 1º Bach -> 2º Bach (optimizadas para layout jerárquico)
     for precursor, sucesores in RELACIONES_1_A_2.items(): # Usar la variable global
         if precursor in G: # Si el nodo de 1º Bach está en el grafo
             for sucesor in sucesores:
                 if sucesor in G: # Si el nodo de 2º Bach está en el grafo
-                    G.add_edge(precursor, sucesor, color='#6A5ACD', weight=2) # weight para pyvis
+                    G.add_edge(
+                        precursor, 
+                        sucesor, 
+                        color='#6A5ACD', 
+                        weight=2,
+                        width=2,
+                        arrows={'to': {'enabled': True, 'scaleFactor': 0.8}},
+                        smooth={'type': 'straightCross', 'forceDirection': 'horizontal'},
+                        physics=False
+                    )
 
-    # Conexiones 2º Bach -> Grados
+    # Conexiones 2º Bach -> Grados (optimizadas para minimizar cruces)
     min_ponderacion_mostrar = 0.19 # Ponderación 0.2
     if mostrar_ponderacion_015:
         min_ponderacion_mostrar = 0.14 # Ponderación 0.15
 
-    for asignatura_2 in asignaturas_2_activas:
+    # Agrupar conexiones por asignatura para mejor organización
+    for asignatura_2 in sorted(asignaturas_2_activas):
         if asignatura_2 not in G: continue # Si la asignatura no está en el grafo (p.ej. por filtrado de nodo)
         color_base_edge = color_map_2_bach.get(asignatura_2, '#808080')
+        
+        # Recopilar grados que van a conectar para ordenarlos
+        grados_a_conectar = []
         for _, row in df_data.iterrows():
             grado = row['Grado']
             if grado not in G: continue # Si el grado no está en el grafo
             
             ponderacion = row.get(asignatura_2, 0.0)
-            
             if ponderacion >= min_ponderacion_mostrar:
-                edge_color = color_base_edge
-                edge_width = 2.5 if ponderacion >= 0.19 else 1.5
-                edge_title = f"{ponderacion:.2f}"
-                G.add_edge(asignatura_2, grado, color=edge_color, weight=edge_width, title=edge_title, label=f"{ponderacion:.2f}")
-            elif ponderacion > 0 and st.session_state.get('show_zero_ponderations', False): # Para mostrar 0.0 o 0.1 si el checkbox general está activo
-                 # Esta lógica necesitaría ajustarse si 'show_zero_ponderations' debe aplicar aquí
-                 pass # Por ahora, nos ceñimos a 0.2 y 0.15 opcional
-
+                grados_a_conectar.append((grado, ponderacion))
+          # Ordenar grados por ponderación (mayor primero) para minimizar cruces
+        grados_a_conectar.sort(key=lambda x: x[1], reverse=True)
+        
+        # Crear conexiones ordenadas
+        for grado, ponderacion in grados_a_conectar:
+            edge_color = color_base_edge
+            edge_width = 2.5 if ponderacion >= 0.19 else 1.5
+            edge_title = f"{ponderacion:.2f}"
+            G.add_edge(
+                asignatura_2, 
+                grado, 
+                color=edge_color, 
+                weight=edge_width, 
+                width=edge_width,
+                title=edge_title, 
+                label=f"{ponderacion:.2f}",
+                arrows={'to': {'enabled': True, 'scaleFactor': 0.8}},
+                smooth={'type': 'straightCross', 'forceDirection': 'horizontal'},                physics=False
+            )
 
     # --- Visualización con Pyvis ---
-    # Crear un objeto Pyvis Network
-    # El height y width se pueden ajustar según necesidad.
-    # `cdn_resources='remote'` es bueno para asegurar que funcione en diferentes entornos.
-    # `select_menu=True` y `filter_menu=True` añaden controles de Pyvis, pero pueden ser redundantes con los de Streamlit.
-    
-    # Generar un nombre de archivo único para evitar conflictos si la función se llama rápidamente o en paralelo
-    # import uuid
-    # html_file_name = f"pyvis_graph_{uuid.uuid4().hex}.html"
-    
-    # Para Streamlit, es mejor generar el HTML y pasarlo como string si es posible,
-    # o guardarlo en un directorio temporal accesible por Streamlit.
-    # st.components.v1.html necesita una ruta de archivo o una cadena HTML.
-
     if not G.nodes():
-        # st.warning("No hay datos para mostrar en el gráfico con los filtros actuales.")
         return None # Devuelve None si no hay nodos para evitar errores en Pyvis
 
     nt = PyvisNetwork(height=f"{alto_px}px", width="100%", notebook=False, directed=True, cdn_resources='remote')
     nt.from_nx(G)
 
-    # Configuración de la física para que los nodos sean arrastrables
-    # nt.show_buttons(filter_=['physics']) # Muestra botones para controlar la física
-    # Valid JSON options string
+    # Hierarchical layout configuration following Sugiyama framework principles
     options_json = """
     {
       "physics": {
-        "enabled": false, // Ensure physics is disabled for a fixed plot
-        "barnesHut": {
-          "gravitationalConstant": -3000,
-          "centralGravity": 0.1,
-          "springLength": 150,
-          "springConstant": 0.05,
-          "damping": 0.09,
-          "avoidOverlap": 0.1
+        "enabled": false,
+        "hierarchicalRepulsion": {
+          "centralGravity": 0.0,
+          "springLength": 100,
+          "springConstant": 0.01,
+          "nodeDistance": 120,
+          "damping": 0.09
         },
-        "minVelocity": 0.75,
-        "solver": "barnesHut"
+        "maxVelocity": 50,
+        "minVelocity": 0.1,
+        "solver": "hierarchicalRepulsion",
+        "stabilization": {"iterations": 100}
       },
       "layout": {
         "hierarchical": {
           "enabled": true,
           "direction": "LR",
           "sortMethod": "directed",
-          "levelSeparation": 200,
-          "nodeSpacing": 150,
-          "treeSpacing": 250
+          "shakeTowards": "roots",
+          "levelSeparation": 250,
+          "nodeSpacing": 120,
+          "treeSpacing": 200,
+          "blockShifting": true,
+          "edgeMinimization": true,
+          "parentCentralization": true,
+          "improvedLayout": true
         }
       },
-      "interaction":{
-        "dragNodes": false, // Disable node dragging
+      "interaction": {
+        "dragNodes": false,
         "dragView": true,
         "zoomView": true,
+        "selectConnectedEdges": true,
         "tooltipDelay": 200,
         "hideEdgesOnDrag": false,
         "hideNodesOnDrag": false
       },
       "nodes": {
-          "font": {
-              "size": 10
-           }
+        "font": {
+          "size": 11,
+          "face": "arial",
+          "strokeWidth": 2,
+          "strokeColor": "#ffffff"
+        },
+        "borderWidth": 2,
+        "borderWidthSelected": 3,
+        "chosen": {
+          "node": {
+            "borderColor": "#2B7CE9",
+            "borderWidth": 3
+          }
+        },
+        "shape": "box",
+        "margin": 10,
+        "widthConstraint": {
+          "minimum": 80,
+          "maximum": 200
+        }
       },
       "edges": {
-          "font": {
-              "size": 8,
-              "align": "top"
-          },
-          "arrows": {
-              "to": {"enabled": true, "scaleFactor": 0.7}
-          },
-          "smooth": {
-              "type": "cubicBezier",
-              "forceDirection": "horizontal",
-              "roundness": 0.7
+        "font": {
+          "size": 9,
+          "align": "top",
+          "strokeWidth": 1,
+          "strokeColor": "#ffffff"
+        },
+        "arrows": {
+          "to": {
+            "enabled": true, 
+            "scaleFactor": 0.8,
+            "type": "arrow"
           }
+        },
+        "smooth": {
+          "type": "straightCross",
+          "forceDirection": "horizontal",
+          "roundness": 0.1
+        },
+        "color": {
+          "inherit": false,
+          "opacity": 0.8
+        },
+        "width": 2,
+        "chosen": {
+          "edge": {
+            "color": "#2B7CE9",
+            "width": 3
+          }
+        }
       }
     }
     """
