@@ -708,109 +708,99 @@ if df_ponderaciones_original is not None:
             st.markdown("---")
             st.markdown("#### Selección de Asignaturas Específicas")
             
-            notas_especificas_validas = {} 
+            notas_especificas_ingresadas = {} 
 
             if not asignaturas_que_ponderan_para_grado:
                 st.warning("Este grado no tiene asignaturas específicas con ponderación > 0 en nuestros datos.")
             else:
                 st.markdown("Selecciona **hasta 2 asignaturas** de la fase específica y sus notas (sobre 10). Solo se considerarán si la nota es >= 5.0.")
 
-                opciones_fase_especifica = {
+                opciones_fase_especifica_map = {
                     f"{map_asignaturas_display[asig]} (Pondera: {ponderacion:.1f})": asig
                     for asig, ponderacion in sorted(asignaturas_que_ponderan_para_grado.items(), key=lambda item: item[0])
                 }
                 
                 asig1_original_name = None
-                asig1_display = st.selectbox(
+                asig1_display_options = [''] + list(opciones_fase_especifica_map.keys())
+                asig1_display_name = st.selectbox(
                     "Asignatura Específica 1 (opcional):", 
-                    options=[''] + list(opciones_fase_especifica.keys()), 
+                    options=asig1_display_options, 
                     format_func=lambda x: 'Ninguna' if x == '' else x, 
                     key='calc_asig1_sel_reactive'
                 )
-                if asig1_display:
-                    asig1_original_name = opciones_fase_especifica[asig1_display]
-                    nota_asig1_input = st.number_input(
+                
+                if asig1_display_name:
+                    asig1_original_name = opciones_fase_especifica_map[asig1_display_name]
+                    notas_especificas_ingresadas[asig1_original_name] = st.number_input(
                         f"Nota en {map_asignaturas_display[asig1_original_name]}:", 
                         min_value=0.0, max_value=10.0, value=0.0, step=0.1, format="%.1f", 
-                        key=f"calc_nota_{asig1_original_name}_reactive_s1" # Ensure unique key
+                        key=f"calc_nota_asig1_{asig1_original_name}_reactive" 
                     )
-                    if nota_asig1_input >= 5.0:
-                        notas_especificas_validas[asig1_original_name] = nota_asig1_input
-                
-                opciones_asig2_display_keys = list(opciones_fase_especifica.keys())
-                if asig1_display:
-                    opciones_asig2_display_keys = [opt for opt in opciones_asig2_display_keys if opt != asig1_display]
-                
+
                 asig2_original_name = None
-                asig2_display = st.selectbox(
+                opciones_para_asig2 = list(opciones_fase_especifica_map.keys())
+                if asig1_display_name: 
+                    opciones_para_asig2 = [opt for opt in opciones_para_asig2 if opt != asig1_display_name]
+                
+                asig2_display_options = [''] + opciones_para_asig2
+                asig2_display_name = st.selectbox(
                     "Asignatura Específica 2 (opcional):", 
-                    options=[''] + opciones_asig2_display_keys, 
+                    options=asig2_display_options, 
                     format_func=lambda x: 'Ninguna' if x == '' else x, 
                     key='calc_asig2_sel_reactive'
                 )
-                if asig2_display:
-                    asig2_original_name = opciones_fase_especifica[asig2_display]
-                    # Ensure not to process the same subject if asig1_original_name is the same
-                    # (though UI tries to prevent this by filtering display keys)
+                
+                if asig2_display_name:
+                    asig2_original_name = opciones_fase_especifica_map[asig2_display_name]
+                    # Ensure asig2 is different from asig1 if asig1 was selected and has a name
                     if asig1_original_name != asig2_original_name:
-                        nota_asig2_input = st.number_input(
+                         notas_especificas_ingresadas[asig2_original_name] = st.number_input(
                             f"Nota en {map_asignaturas_display[asig2_original_name]}:", 
                             min_value=0.0, max_value=10.0, value=0.0, step=0.1, format="%.1f", 
-                            key=f"calc_nota_{asig2_original_name}_reactive_s2" # Ensure unique key
+                            key=f"calc_nota_asig2_{asig2_original_name}_reactive"
                         )
-                        if nota_asig2_input >= 5.0:
-                            notas_especificas_validas[asig2_original_name] = nota_asig2_input
-                    elif not asig1_original_name: # If asig1 was not selected, asig2 is fine
-                         nota_asig2_input = st.number_input(
-                            f"Nota en {map_asignaturas_display[asig2_original_name]}:", 
-                            min_value=0.0, max_value=10.0, value=0.0, step=0.1, format="%.1f", 
-                            key=f"calc_nota_{asig2_original_name}_reactive_s2_fallback" # Ensure unique key
-                        )
-                         if nota_asig2_input >= 5.0:
-                            notas_especificas_validas[asig2_original_name] = nota_asig2_input
             
             nota_acceso_base = 0.6 * nota_bachillerato + 0.4 * nota_fase_general
             
-            contribuciones_especificas_calculadas = []
-            for asig_original, nota_materia in notas_especificas_validas.items():
-                ponderacion_materia = ponderaciones_grado.get(asig_original, 0)
-                contribucion = ponderacion_materia * nota_materia
-                contribuciones_especificas_calculadas.append({
-                    "name": asig_original,
-                    "grade": nota_materia,
-                    "ponderacion": ponderacion_materia,
-                    "contribution": contribucion
-                })
+            contribuciones_potenciales = []
+            for asig_original, nota_ingresada in notas_especificas_ingresadas.items():
+                if nota_ingresada >= 5.0:
+                    ponderacion_materia = ponderaciones_grado.get(asig_original, 0) 
+                    if ponderacion_materia > 0:
+                        contribucion = ponderacion_materia * nota_ingresada
+                        contribuciones_potenciales.append({
+                            "name": asig_original,
+                            "grade": nota_ingresada,
+                            "ponderacion": ponderacion_materia,
+                            "contribution": contribucion
+                        })
             
-            contribuciones_finales = sorted(contribuciones_especificas_calculadas, key=lambda x: x["contribution"], reverse=True)[:2]
-
-            suma_ponderaciones_especificas = 0.0
-            contribuciones_especificas_display_list = []
-            for detalle_contribucion in contribuciones_finales:
-                suma_ponderaciones_especificas += detalle_contribucion["contribution"]
-                contribuciones_especificas_display_list.append(
-                    f"- {map_asignaturas_display[detalle_contribucion['name']]}: Nota `{detalle_contribucion['grade']:.1f}`, Ponderación `{detalle_contribucion['ponderacion']:.1f}`, Aporta: `{detalle_contribucion['contribution']:.3f}`"
-                )
-
+            contribuciones_finales_seleccionadas = sorted(contribuciones_potenciales, key=lambda x: x["contribution"], reverse=True)[:2]
+            
+            suma_ponderaciones_especificas = sum(c["contribution"] for c in contribuciones_finales_seleccionadas)
+            
             nota_final_acceso = nota_acceso_base + suma_ponderaciones_especificas
             
             st.markdown("---")
             st.subheader(f"📈 Tu Nota de Acceso Estimada para {grado_seleccionado_calc}:")
             st.metric(label="Nota Final (sobre 14)", value=f"{nota_final_acceso:.3f}")
 
-            st.markdown(f'''
+            desglose_md = f"""
             **Desglose:**
-            - Componente Bachillerato (60%): `{(0.6 * nota_bachillerato):.3f}`
-            - Componente Fase General (40%): `{(0.4 * nota_fase_general):.3f}`
+            - Componente Bachillerato (60%): `{nota_bachillerato * 0.6:.3f}`
+            - Componente Fase General (40%): `{nota_fase_general * 0.4:.3f}`
             - **Subtotal Nota Base (sobre 10): `{nota_acceso_base:.3f}`**
             - Suma de ponderaciones de asignaturas específicas (sobre 4): `{suma_ponderaciones_especificas:.3f}`
-            ''')
-            if contribuciones_especificas_display_list:
+            """
+            st.markdown(desglose_md)
+
+            if contribuciones_finales_seleccionadas:
                 st.markdown("**Detalle de asignaturas específicas consideradas (nota >= 5.0, se eligen las dos que más aporten):**")
-                for detalle in contribuciones_especificas_display_list:
-                    st.markdown(detalle)
+                for detalle in contribuciones_finales_seleccionadas:
+                    st.markdown(f"- {map_asignaturas_display[detalle['name']]}: Nota `{detalle['grade']:.1f}`, Ponderación `{detalle['ponderacion']:.1f}`, Aporta: `{detalle['contribution']:.3f}`")
             else:
-                st.info("No se han añadido asignaturas específicas válidas (nota >= 5.0) a la nota de acceso, o las notas son < 5.0.")
+                st.info("No se han añadido asignaturas específicas válidas (nota >= 5.0 y ponderación > 0) a la nota de acceso, o las notas son < 5.0.")
+            
             st.caption("Recuerda: solo las asignaturas específicas con nota >= 5.0 contribuyen a la fase específica. Se eligen las dos que más aporten.")
                         
         else: 
