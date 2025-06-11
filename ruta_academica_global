@@ -1,0 +1,794 @@
+// Flujo Académico
+digraph {
+	graph [bgcolor=transparent overlap=false rankdir=LR splines=curved]
+	graph [dpi=300 fontsize=40 label="Ruta Académica Global" labelloc=t size="40,60"]
+	subgraph cluster_1 {
+		color="#F5F5F5" label="1º Bachillerato" style=filled
+		node [color="#E8E8E8" shape=box style="filled,rounded"]
+		"Matemáticas_I" [label="Matemáticas I"]
+		Mates_Aplicadas_CCSS_I [label="Mates Aplicadas CCSS I"]
+		"Física_y_Química" [label="Física y Química"]
+		"Biología_y_Geología" [label="Biología y Geología"]
+		"Dibujo_Técnico_I" [label="Dibujo Técnico I"]
+		"Latín_I" [label="Latín I"]
+		Griego_I [label="Griego I"]
+		"Economía" [label="Economía"]
+		"Hª_Mundo_Contemporáneo" [label="Hª Mundo Contemporáneo"]
+	}
+	subgraph cluster_2 {
+		color="#E0E0E0" label="2º Bachillerato (Asignaturas que ponderan)" style=filled
+		node [shape=box style="filled,rounded"]
+		"Historia_de_la_Filosofía" [label="Historia de la Filosofía" color="#1f77b480"]
+		"Análisis_Musical_II" [label="Análisis Musical II" color="#1f77b480"]
+		"Artes_Escénicas_II" [label="Artes Escénicas II" color="#aec7e880"]
+		"Dibujo_Artístico_II" [label="Dibujo Artístico II" color="#ff7f0e80"]
+		"Latín_II" [label="Latín II" color="#ffbb7880"]
+		"Matemáticas_II" [label="Matemáticas II" color="#2ca02c80"]
+		"Matemáticas_Aplicadas_CC.SS." [label="Matemáticas Aplicadas CC.SS." color="#2ca02c80"]
+		Ciencias_Generales [label="Ciencias Generales" color="#98df8a80"]
+		"Biología" [label="Biología" color="#d6272880"]
+		"Dibujo_Técnico_II" [label="Dibujo Técnico II" color="#ff989680"]
+		"Física" [label="Física" color="#9467bd80"]
+		"Geología_y_Ciencias_Ambientales" [label="Geología y Ciencias Ambientales" color="#9467bd80"]
+		"Tecnología_e_Ingeniería_II" [label="Tecnología e Ingeniería II" color="#c5b0d580"]
+		"Química" [label="Química" color="#8c564b80"]
+		"Empresa_y_Diseño_de_modelos_de_negocio" [label="Empresa y Diseño de modelos de negocio" color="#c49c9480"]
+		"Geografía" [label="Geografía" color="#e377c280"]
+		Griego_II [label="Griego II" color="#e377c280"]
+		Historia_del_Arte [label="Historia del Arte" color="#f7b6d280"]
+		"Dibujo_Técnico_aplicado_a_las_artes_plásticas_y_al_diseño_II" [label="Dibujo Técnico aplicado a las artes plásticas y al diseño II" color="#7f7f7f80"]
+		"Diseño" [label="Diseño" color="#c7c7c780"]
+		"Fundamentos_Artísticos" [label="Fundamentos Artísticos" color="#bcbd2280"]
+		"Técnicas_de_Expresión_Gráfico__Plástica" [label="Técnicas de Expresión Gráfico  Plástica" color="#bcbd2280"]
+		"Coro_y_Técnica_Vocal_II" [label="Coro y Técnica Vocal II" color="#dbdb8d80"]
+		"Historia_nde_la_música_y_de_la_danza" [label="Historia nde la música y de la danza" color="#17becf80"]
+		"Literatura_dramática" [label="Literatura dramática" color="#9edae580"]
+		"Movimientos_Culturales_y_Artísticos" [label="Movimientos Culturales y Artísticos" color="#9edae580"]
+	}
+	subgraph cluster_4 {
+		color="#D0D0D0" label="Grados Universitarios" style=filled
+		node [shape=box style="filled,rounded"]
+		subgraph cluster_rama_AyH {
+			color="#C8C8C8" label=AyH style=filled
+			"Arqueología" [label="Arqueología" color="#FFDAB9"]
+			"Bellas Artes" [label="Bellas Artes" color="#FFDAB9"]
+			"Conservación y Rest.de Bienes Culturales" [label="Conservación y
+Rest.de Bienes Culturales" color="#FFDAB9"]
+			"Estudios Arabes e Islámicos" [label="Estudios Arabes e Islámicos" color="#FFDAB9"]
+			"Estudios Árabes e Islámicos + Estudios Ingleses" [label="Estudios Árabes e Islámicos+
+Estudios Ingleses" color="#FFDAB9"]
+			"Estudios Asia Oriental" [label="Estudios Asia Oriental" color="#FFDAB9"]
+			"Estudios Franceses" [label="Estudios Franceses" color="#FFDAB9"]
+			"Estudios Franceses + Estudios Ingleses" [label="Estudios Franceses+
+Estudios Ingleses" color="#FFDAB9"]
+			"Estudios Ingleses" [label="Estudios Ingleses" color="#FFDAB9"]
+			"Estudios Ingleses + Filologia Hispanica" [label="Estudios Ingleses+
+Filologia Hispanica" color="#FFDAB9"]
+			"Estudios Transculturales Europeos: Lenguas, Culturas, Interacciones" [label="Estudios Transculturales Europeos: Lenguas, Culturas, Interacciones" color="#FFDAB9"]
+			"Filología Clásica" [label="Filología Clásica" color="#FFDAB9"]
+			"Filología Clásica + Estudios Ingleses" [label="Filología Clásica+
+Estudios Ingleses" color="#FFDAB9"]
+			"Filología Clásica + Filología Hispánica" [label="Filología Clásica+
+Filología Hispánica" color="#FFDAB9"]
+			"Filología Hispánica" [label="Filología Hispánica" color="#FFDAB9"]
+			"Filología Hispánica + Estudios Ingleses" [label="Filología Hispánica+
+Estudios Ingleses" color="#FFDAB9"]
+			"Filosofía" [label="Filosofía" color="#FFDAB9"]
+			"Geografía e Historia" [label="Geografía e Historia" color="#FFDAB9"]
+			"Gestión Cultural" [label="Gestión Cultural" color="#FFDAB9"]
+			Historia [label=Historia color="#FFDAB9"]
+			"Historia + Historia del Arte" [label="Historia+
+Historia del Arte" color="#FFDAB9"]
+			"Historia + Humanidades" [label="Historia+
+Humanidades" color="#FFDAB9"]
+			"Historia del Arte" [label="Historia del Arte" color="#FFDAB9"]
+			"Historia y Ciencias de la Música" [label="Historia y
+Ciencias de
+la Música" color="#FFDAB9"]
+			Humanidades [label=Humanidades color="#FFDAB9"]
+			"Humanidades + Traducción e Interpretación" [label="Humanidades+
+Traducción e Interpretación" color="#FFDAB9"]
+			"Lenguas Modernas y sus Literaturas" [label="Lenguas Modernas y
+sus Literaturas" color="#FFDAB9"]
+			"Lingüística y Lenguas Aplicadas" [label="Lingüística y
+Lenguas Aplicadas" color="#FFDAB9"]
+			"Lingüística y Lenguas Aplicadas +Estudios Ingleses" [label="Lingüística y
+Lenguas Aplicadas +Estudios Ingleses" color="#FFDAB9"]
+			"Literaturas Comparadas" [label="Literaturas Comparadas" color="#FFDAB9"]
+			"Traducción e Interpretación" [label="Traducción e Interpretación" color="#FFDAB9"]
+			"Traducción e Interpretación + Estudios Ingleses" [label="Traducción e Interpretación+
+Estudios Ingleses" color="#FFDAB9"]
+			"Traducción e Interpretación + Filología Hispánica" [label="Traducción e Interpretación+
+Filología Hispánica" color="#FFDAB9"]
+		}
+		subgraph "cluster_rama_AyH+C" {
+			color="#C8C8C8" label="AyH+C" style=filled
+			"Ciencias Ambientales + Geografía e Historia" [label="Ciencias Ambientales+
+Geografía e Historia" color="#FFDAB9"]
+		}
+		subgraph "cluster_rama_AyH+SyJ" {
+			color="#C8C8C8" label="AyH+SyJ" style=filled
+			"Derecho + Filosofía" [label="Derecho+
+Filosofía" color="#FFDAB9"]
+			"Educación Primaria + Estudios Franceses" [label="Educación Primaria+
+Estudios Franceses" color="#FFDAB9"]
+			"Educación Primaria + Estudios Ingleses" [label="Educación Primaria+
+Estudios Ingleses" color="#FFDAB9"]
+			"Geografía y Gestión del Territorio + Historia" [label="Geografía y
+Gestión del Territorio+
+Historia" color="#FFDAB9"]
+			"Lengua y Literatura Alemanas + Educación Primaria" [label="Lengua y
+Literatura Alemanas+
+Educación Primaria" color="#FFDAB9"]
+			"Traducción e Interpretación + Turismo" [label="Traducción e Interpretación+
+Turismo" color="#FFDAB9"]
+		}
+		subgraph cluster_rama_C {
+			color="#C8C8C8" label=C style=filled
+			"Biología" [label="Biología" color="#FFDAB9"]
+			"Bioquímica" [label="Bioquímica" color="#FFDAB9"]
+			"Biotecnología" [label="Biotecnología" color="#FFDAB9"]
+			"Ciencia y Tecnología de los Alimentos" [label="Ciencia y
+Tecnología de
+los Alimentos" color="#FFDAB9"]
+			"Ciencias Ambientales" [label="Ciencias Ambientales" color="#FFDAB9"]
+			"Ciencias Ambientales + Ciencias del Mar" [label="Ciencias Ambientales+
+Ciencias del Mar" color="#FFDAB9"]
+			"Ciencias Ambientales + Geología" [label="Ciencias Ambientales+
+Geología" color="#FFDAB9"]
+			"Ciencias del Mar" [label="Ciencias del Mar" color="#FFDAB9"]
+			"Enología" [label="Enología" color="#FFDAB9"]
+			"Estadística" [label="Estadística" color="#FFDAB9"]
+			"Física" [label="Física" color="#FFDAB9"]
+			"Física + Matemáticas" [label="Física+
+Matemáticas" color="#FFDAB9"]
+			"Geología" [label="Geología" color="#FFDAB9"]
+			"Matemáticas" [label="Matemáticas" color="#FFDAB9"]
+			"Matemáticas + Estadística" [label="Matemáticas+
+Estadística" color="#FFDAB9"]
+			"Matemáticas + Física" [label="Matemáticas+
+Física" color="#FFDAB9"]
+			"Óptica y Optometría (rama de ciencias)" [label="Óptica y
+Optometría (rama de
+ciencias)" color="#FFDAB9"]
+			"Química" [label="Química" color="#FFDAB9"]
+			"Química + Enología" [label="Química+
+Enología" color="#FFDAB9"]
+		}
+		subgraph "cluster_rama_C+SyJ" {
+			color="#C8C8C8" label="C + SyJ" style=filled
+			"Matemáticas + Economía" [label="Matemáticas+
+Economía" color="#FFDAB9"]
+		}
+		subgraph "cluster_rama_C+IyA" {
+			color="#C8C8C8" label="C+IyA" style=filled
+			"Enología + Ingeniería Agroalimentaria y del Medio Rural" [label="Enología+
+Ingeniería Agroalimentaria y
+del Medio Rural" color="#FFDAB9"]
+			"Ingeniería Agrícola + Ciencias Ambientales" [label="Ingeniería Agrícola+
+Ciencias Ambientales" color="#FFDAB9"]
+			"Ingeniería Informática + Matemáticas" [label="Ingeniería Informática+
+Matemáticas" color="#FFDAB9"]
+			"Ingeniería Informática. Tecnología Informática + Grado en Matemáticas" [label="Ingeniería Informática. Tecnología Informática+
+Grado en Matemáticas" color="#FFDAB9"]
+			"Ingeniería Química + Biotecnología" [label="Ingeniería Química+
+Biotecnología" color="#FFDAB9"]
+		}
+		subgraph "cluster_rama_C+SD" {
+			color="#C8C8C8" label="C+SD" style=filled
+			"Nutrición Humana y Dietética + CC. Tecnología de los alimentos" [label="Nutrición Humana y
+Dietética+
+CC. Tecnología de
+los alimentos" color="#FFDAB9"]
+		}
+		subgraph cluster_rama_IyA {
+			color="#C8C8C8" label=IyA style=filled
+			"Arquitectura Naval e Ingeniería Marítima" [label="Arquitectura Naval e Ingeniería Marítima" color="#FFDAB9"]
+			"Ciberseguridad e Inteligencia Artificial" [label="Ciberseguridad e Inteligencia Artificial" color="#FFDAB9"]
+			"Edificación" [label="Edificación" color="#FFDAB9"]
+			"Física + Ingeniería de Materiales" [label="Física+
+Ingeniería de
+Materiales" color="#FFDAB9"]
+			"Fundamentos Arquitectura" [label="Fundamentos Arquitectura" color="#FFDAB9"]
+			"Ingeniería Aeroespacial" [label="Ingeniería Aeroespacial" color="#FFDAB9"]
+			"Ingeniería Agricola" [label="Ingeniería Agricola" color="#FFDAB9"]
+			"Ingeniería Agroalimentaria y del Medio Rural" [label="Ingeniería Agroalimentaria y
+del Medio Rural" color="#FFDAB9"]
+			"Ingeniería Civil" [label="Ingeniería Civil" color="#FFDAB9"]
+			"Ingeniería Civil + Ingeniería en Recursos Energéticos y Mineros" [label="Ingeniería Civil+
+Ingeniería en Recursos Energéticos y
+Mineros" color="#FFDAB9"]
+			"Ingeniería Civil + Ingeniería en Tecnologías Mineras" [label="Ingeniería Civil+
+Ingeniería en Tecnologías Mineras" color="#FFDAB9"]
+			"Ingeniería de Computadores" [label="Ingeniería de
+Computadores" color="#FFDAB9"]
+			"Ingeniería de Diseño Industrial y Des.del Prod." [label="Ingeniería de
+Diseño Industrial y
+Des.del Prod." color="#FFDAB9"]
+			"Ingeniería de la Energía" [label="Ingeniería de
+la Energía" color="#FFDAB9"]
+			"Ingeniería de la Salud" [label="Ingeniería de
+la Salud" color="#FFDAB9"]
+			"Ingeniería de Materiales" [label="Ingeniería de
+Materiales" color="#FFDAB9"]
+			"Ingeniería de Recursos Energéticos" [label="Ingeniería de
+Recursos Energéticos" color="#FFDAB9"]
+			"Ingeniería de Recursos Energéticos + Ingeniería Química Industrial" [label="Ingeniería de
+Recursos Energéticos+
+Ingeniería Química Industrial" color="#FFDAB9"]
+			"Ingeniería de Recursos Energéticos y Mineros + Ingeniería Eléctrica" [label="Ingeniería de
+Recursos Energéticos y
+Mineros+
+Ingeniería Eléctrica" color="#FFDAB9"]
+			"Ingeniería de Sistemas de Telecomunicación" [label="Ingeniería de
+Sistemas de
+Telecomunicación" color="#FFDAB9"]
+			"Ingeniería de Sistemas Electrónicos" [label="Ingeniería de
+Sistemas Electrónicos" color="#FFDAB9"]
+			"Ingeniería de Sonido e Imagen" [label="Ingeniería de
+Sonido e Imagen" color="#FFDAB9"]
+			"Ingeniería de Tecnologías de Telecomunicación" [label="Ingeniería de
+Tecnologías de
+Telecomunicación" color="#FFDAB9"]
+			"Ingeniería de Tecnologías Mineras" [label="Ingeniería de
+Tecnologías Mineras" color="#FFDAB9"]
+			"Ingeniería del Software" [label="Ingeniería del Software" color="#FFDAB9"]
+			"Ingeniería Eléctrica" [label="Ingeniería Eléctrica" color="#FFDAB9"]
+			"Ingeniería Eléctrica + Ingeniería Electrónica Industrial" [label="Ingeniería Eléctrica+
+Ingeniería Electrónica Industrial" color="#FFDAB9"]
+			"Ingeniería Eléctrica + Ingeniería Energética" [label="Ingeniería Eléctrica+
+Ingeniería Energética" color="#FFDAB9"]
+			"Ingeniería Eléctrica + Ingeniería Mecánica" [label="Ingeniería Eléctrica+
+Ingeniería Mecánica" color="#FFDAB9"]
+			"Ingeniería Electrónica" [label="Ingeniería Electrónica" color="#FFDAB9"]
+			"Ingeniería Electrónica Industrial" [label="Ingeniería Electrónica Industrial" color="#FFDAB9"]
+			"Ingeniería Electrónica Industrial + Ingeniería Eléctrica" [label="Ingeniería Electrónica Industrial+
+Ingeniería Eléctrica" color="#FFDAB9"]
+			"Ingeniería Electrónica Industrial + Ingeniería Mecánica" [label="Ingeniería Electrónica Industrial+
+Ingeniería Mecánica" color="#FFDAB9"]
+			"Ingeniería Electrónica Industrial y Automática" [label="Ingeniería Electrónica Industrial y
+Automática" color="#FFDAB9"]
+			"Ingeniería Electrónica, Robótica y Mecatrónica" [label="Ingeniería Electrónica, Robótica y
+Mecatrónica" color="#FFDAB9"]
+			"Ingeniería en Diseño Ind. y Desarr. del Prod. + Ingeniería Mecánica" [label="Ingeniería en Diseño Ind. y
+Desarr. del Prod.+
+Ingeniería Mecánica" color="#FFDAB9"]
+			"Ingeniería en Explotación de Minas y Recursos Energéticos" [label="Ingeniería en Explotación de
+Minas y
+Recursos Energéticos" color="#FFDAB9"]
+			"Ingeniería en Organización Industrial" [label="Ingeniería en Organización Industrial" color="#FFDAB9"]
+			"Ingeniería en Recursos Energéticos y Mineros" [label="Ingeniería en Recursos Energéticos y
+Mineros" color="#FFDAB9"]
+			"Ingeniería en Tecnologías Industriales" [label="Ingeniería en Tecnologías Industriales" color="#FFDAB9"]
+			"Ingeniería Energética" [label="Ingeniería Energética" color="#FFDAB9"]
+			"Ingeniería Forestal" [label="Ingeniería Forestal" color="#FFDAB9"]
+			"Ingeniería Forestal + Ingeniería Agroalimentaria y del Medio Rural" [label="Ingeniería Forestal+
+Ingeniería Agroalimentaria y
+del Medio Rural" color="#FFDAB9"]
+			"Ingeniería Forestal y del Medio Natural" [label="Ingeniería Forestal y
+del Medio Natural" color="#FFDAB9"]
+			"Ingeniería Geomática y Topográfíca" [label="Ingeniería Geomática y
+Topográfíca" color="#FFDAB9"]
+			"Ingeniería Informática" [label="Ingeniería Informática" color="#FFDAB9"]
+			"Ingeniería Informática de Sistemas de Información" [label="Ingeniería Informática de
+Sistemas de
+Información" color="#FFDAB9"]
+			"Ingeniería Informática. Ingeniería de Computadores" [label="Ingeniería Informática. Ingeniería de
+Computadores" color="#FFDAB9"]
+			"Ingeniería Informática. Ingeniería del Software" [label="Ingeniería Informática. Ingeniería del Software" color="#FFDAB9"]
+			"Ingeniería Informática. Tecnología Informática" [label="Ingeniería Informática. Tecnología Informática" color="#FFDAB9"]
+			"Ingeniería Marina" [label="Ingeniería Marina" color="#FFDAB9"]
+			"Ingeniería Mecánica" [label="Ingeniería Mecánica" color="#FFDAB9"]
+			"Ingeniería Mecánica + Ingeniería de Organización Industrial" [label="Ingeniería Mecánica+
+Ingeniería de
+Organización Industrial" color="#FFDAB9"]
+			"Ingeniería Mecánica + Ingeniería Eléctrica" [label="Ingeniería Mecánica+
+Ingeniería Eléctrica" color="#FFDAB9"]
+			"Ingeniería Mecánica + Ingeniería Electrónica Industrial y Automática" [label="Ingeniería Mecánica+
+Ingeniería Electrónica Industrial y
+Automática" color="#FFDAB9"]
+			"Ingeniería Mecánica + Ingeniería en Diseño Ind. y Desarrollo del Producto" [label="Ingeniería Mecánica+
+Ingeniería en Diseño Ind. y
+Desarrollo del Producto" color="#FFDAB9"]
+			"Ingeniería Mecánica + Ingeniería en Explotación de Minas y Recursos Energéticos" [label="Ingeniería Mecánica+
+Ingeniería en Explotación de
+Minas y
+Recursos Energéticos" color="#FFDAB9"]
+			"Ingeniería Naútica y Transporte Marítimo" [label="Ingeniería Naútica y
+Transporte Marítimo" color="#FFDAB9"]
+			"Ingeniería Química" [label="Ingeniería Química" color="#FFDAB9"]
+			"Ingeniería Química Industrial" [label="Ingeniería Química Industrial" color="#FFDAB9"]
+			"Ingeniería Radioeléctrica" [label="Ingeniería Radioeléctrica" color="#FFDAB9"]
+			"Ingeniería Telemática" [label="Ingeniería Telemática" color="#FFDAB9"]
+			"Ingeniería Telemática + Ingeniería de Tecnologías de Telecomunicación" [label="Ingeniería Telemática+
+Ingeniería de
+Tecnologías de
+Telecomunicación" color="#FFDAB9"]
+			"Química + Ingeniería de Materiales" [label="Química+
+Ingeniería de
+Materiales" color="#FFDAB9"]
+		}
+		subgraph "cluster_rama_IyA+C" {
+			color="#C8C8C8" label="IyA+C" style=filled
+			"Ciencias Ambientales + Ingeniería Florestal y del Medio Natural" [label="Ciencias Ambientales+
+Ingeniería Florestal y
+del Medio Natural" color="#FFDAB9"]
+			"Ingeniería de Tecnologías de Telecomunicación + Matemáticas" [label="Ingeniería de
+Tecnologías de
+Telecomunicación+
+Matemáticas" color="#FFDAB9"]
+		}
+		subgraph "cluster_rama_IyA+SyJ" {
+			color="#C8C8C8" label="IyA+SyJ" style=filled
+			"Edificación + Administración y Dirección de Empresas" [label="Edificación+
+Administración y
+Dirección de
+Empresas" color="#FFDAB9"]
+			"Ingeniería Civil + Administración y Dirección de Empresas" [label="Ingeniería Civil+
+Administración y
+Dirección de
+Empresas" color="#FFDAB9"]
+			"Ingeniería Informática + Admistración y Dirección de Empresas" [label="Ingeniería Informática+
+Admistración y
+Dirección de
+Empresas" color="#FFDAB9"]
+			"Ingeniría Civil + Admistración y Dirección de Empresas" [label="Ingeniría Civil+
+Admistración y
+Dirección de
+Empresas" color="#FFDAB9"]
+		}
+		subgraph cluster_rama_SD {
+			color="#C8C8C8" label=SD style=filled
+			"Biomedicina Básica y Experimental" [label="Biomedicina Básica y
+Experimental" color="#FFDAB9"]
+			"Enfermería" [label="Enfermería" color="#FFDAB9"]
+			"Enfermería + Fisioterapia" [label="Enfermería+
+Fisioterapia" color="#FFDAB9"]
+			Farmacia [label=Farmacia color="#FFDAB9"]
+			"Farmacia + Nutrición Humana y Dietética" [label="Farmacia+
+Nutrición Humana y
+Dietética" color="#FFDAB9"]
+			"Farmacia + Óptica y Optometría" [label="Farmacia+
+Óptica y
+Optometría" color="#FFDAB9"]
+			Fisioterapia [label=Fisioterapia color="#FFDAB9"]
+			Logopedia [label=Logopedia color="#FFDAB9"]
+			Medicina [label=Medicina color="#FFDAB9"]
+			"Nutrición Humana y Dietética" [label="Nutrición Humana y
+Dietética" color="#FFDAB9"]
+			"Odontología" [label="Odontología" color="#FFDAB9"]
+			"Óptica y Optometría (rama de cc. salud)" [label="Óptica y
+Optometría (rama de
+cc. salud)" color="#FFDAB9"]
+			"Podología" [label="Podología" color="#FFDAB9"]
+			"Psicología" [label="Psicología" color="#FFDAB9"]
+			"Psicología y Logopedia" [label="Psicología y
+Logopedia" color="#FFDAB9"]
+			"Terapia Ocupacional" [label="Terapia Ocupacional" color="#FFDAB9"]
+			Veterinaria [label=Veterinaria color="#FFDAB9"]
+		}
+		subgraph "cluster_rama_SD+SyJ" {
+			color="#C8C8C8" label="SD+SyJ" style=filled
+			"Fisioterapia + Ciencias de la Actividad Física y del Deporte" [label="Fisioterapia+
+Ciencias de
+la Actividad Física y
+del Deporte" color="#FFDAB9"]
+		}
+		subgraph cluster_rama_SyJ {
+			color="#C8C8C8" label=SyJ style=filled
+			"Administración y Dirección de Empresas" [label="Administración y
+Dirección de
+Empresas" color="#FFDAB9"]
+			"Administración y Direccion de Empresas + Derecho" [label="Administración y
+Direccion de
+Empresas+
+Derecho" color="#FFDAB9"]
+			"Administración y Dirección de Empresas + Finanzas y Contabilidad" [label="Administración y
+Dirección de
+Empresas+
+Finanzas y
+Contabilidad" color="#FFDAB9"]
+			"Administración y Dirección de Empresas + Turismo" [label="Administración y
+Dirección de
+Empresas+
+Turismo" color="#FFDAB9"]
+			"Análisis Económico" [label="Análisis Económico" color="#FFDAB9"]
+			"Antropología Social y Cultural" [label="Antropología Social y
+Cultural" color="#FFDAB9"]
+			"Ciencias de la Actividad Física y del Deporte" [label="Ciencias de
+la Actividad Física y
+del Deporte" color="#FFDAB9"]
+			"Ciencias Gastronómicas y Gestión Hotelera" [label="Ciencias Gastronómicas y
+Gestión Hotelera" color="#FFDAB9"]
+			"Ciencias Políticas y de la Administración" [label="Ciencias Políticas y
+de la Administración" color="#FFDAB9"]
+			"Ciencias Políticas y de la Administración + Periodismo" [label="Ciencias Políticas y
+de la Administración+
+Periodismo" color="#FFDAB9"]
+			"Ciencias Políticas y de la Administración + Sociología" [label="Ciencias Políticas y
+de la Administración+
+Sociología" color="#FFDAB9"]
+			"Ciencias Políticas y de la Admon. + Admón. y Direccion de Empresas" [label="Ciencias Políticas y
+de la Admon.+
+Admón. y
+Direccion de
+Empresas" color="#FFDAB9"]
+			"Comunicación" [label="Comunicación" color="#FFDAB9"]
+			"Comunicación + Comunicación Digital" [label="Comunicación+
+Comunicación Digital" color="#FFDAB9"]
+			"Comunicación Audiovisual" [label="Comunicación Audiovisual" color="#FFDAB9"]
+			"Comunicación Digital" [label="Comunicación Digital" color="#FFDAB9"]
+			"Criminología" [label="Criminología" color="#FFDAB9"]
+			"Criminología y Seguridad" [label="Criminología y
+Seguridad" color="#FFDAB9"]
+			Derecho [label=Derecho color="#FFDAB9"]
+			"Derecho + Ciencias Políticas y de la Administración" [label="Derecho+
+Ciencias Políticas y
+de la Administración" color="#FFDAB9"]
+			"Derecho + Criminología" [label="Derecho+
+Criminología" color="#FFDAB9"]
+			"Derecho + Criminología" [label="Derecho+
+Criminología" color="#FFDAB9"]
+			"Derecho + Criminología y Seguridad" [label="Derecho+
+Criminología y
+Seguridad" color="#FFDAB9"]
+			"Derecho + Economía" [label="Derecho+
+Economía" color="#FFDAB9"]
+			"Derecho + Finanzas y Contabilidad" [label="Derecho+
+Finanzas y
+Contabilidad" color="#FFDAB9"]
+			"Derecho + Gestión y Administración Pública" [label="Derecho+
+Gestión y
+Administración Pública" color="#FFDAB9"]
+			"Derecho + Relaciones Laborales y Recursos Humanos" [label="Derecho+
+Relaciones Laborales y
+Recursos Humanos" color="#FFDAB9"]
+			"Economía" [label="Economía" color="#FFDAB9"]
+			"Economía + Administración y Dirección de Empresas" [label="Economía+
+Administración y
+Dirección de
+Empresas" color="#FFDAB9"]
+			"Educación Infantil" [label="Educación Infantil" color="#FFDAB9"]
+			"Educación Infantil + Educación Primaria" [label="Educación Infantil+
+Educación Primaria" color="#FFDAB9"]
+			"Educación Primaria" [label="Educación Primaria" color="#FFDAB9"]
+			"Educación Primaria + CC. De la Actividad Física y del Deporte" [label="Educación Primaria+
+CC. De la Actividad Física y
+del Deporte" color="#FFDAB9"]
+			"Educación Social" [label="Educación Social" color="#FFDAB9"]
+			"Estadística y Empresa" [label="Estadística y
+Empresa" color="#FFDAB9"]
+			"Finanzas y Contabilidad" [label="Finanzas y
+Contabilidad" color="#FFDAB9"]
+			"Finanzas y Contabilidad + Relaciones Laborales y Recursos Hum." [label="Finanzas y
+Contabilidad+
+Relaciones Laborales y
+Recursos Hum." color="#FFDAB9"]
+			"Geografía y Gestión del Territorio" [label="Geografía y
+Gestión del Territorio" color="#FFDAB9"]
+			"Gestión y Administración Pública" [label="Gestión y
+Administración Pública" color="#FFDAB9"]
+			"Información y Documentacion" [label="Información y
+Documentacion" color="#FFDAB9"]
+			"Márketing e Investigación de Mercados" [label="Márketing e Investigación de
+Mercados" color="#FFDAB9"]
+			"Márketing e Investigación de Mercados + Turismo" [label="Márketing e Investigación de
+Mercados+
+Turismo" color="#FFDAB9"]
+			"Pedagogía" [label="Pedagogía" color="#FFDAB9"]
+			Periodismo [label=Periodismo color="#FFDAB9"]
+			"Periodismo + Comunicación Audiovisual" [label="Periodismo+
+Comunicación Audiovisual" color="#FFDAB9"]
+			"Publicidad y Relaciones Públicas" [label="Publicidad y
+Relaciones Públicas" color="#FFDAB9"]
+			"Publicidad y Relaciones Públicas + Turismo" [label="Publicidad y
+Relaciones Públicas+
+Turismo" color="#FFDAB9"]
+			"Publicidad y RR Públicas + Márketing e Inv. de Mercados" [label="Publicidad y
+RR Públicas+
+Márketing e Inv. de
+Mercados" color="#FFDAB9"]
+			"Relaciones Internacionales" [label="Relaciones Internacionales" color="#FFDAB9"]
+			"Relaciones Internacionales + CC.Políticas y de Admon" [label="Relaciones Internacionales+
+CC.Políticas y
+de Admon" color="#FFDAB9"]
+			"Relaciones Internacionales + Derecho" [label="Relaciones Internacionales+
+Derecho" color="#FFDAB9"]
+			"Relaciones Laborales y Recursos Humanos" [label="Relaciones Laborales y
+Recursos Humanos" color="#FFDAB9"]
+			"Sociología" [label="Sociología" color="#FFDAB9"]
+			"Trabajo Social" [label="Trabajo Social" color="#FFDAB9"]
+			"Trabajo Social + Educación Social" [label="Trabajo Social+
+Educación Social" color="#FFDAB9"]
+			"Trabajo Social + Sociología" [label="Trabajo Social+
+Sociología" color="#FFDAB9"]
+			Turismo [label=Turismo color="#FFDAB9"]
+			"Turismo + Publicidad y Relaciones Públicas" [label="Turismo+
+Publicidad y
+Relaciones Públicas" color="#FFDAB9"]
+		}
+		subgraph "cluster_rama_SyJ+AyH" {
+			color="#C8C8C8" label="SyJ+AyH" style=filled
+			"Relaciones Internacionales + Geografía e Historia" [label="Relaciones Internacionales+
+Geografía e Historia" color="#FFDAB9"]
+			"Relaciones Internacionales + Traductores e Interpretes (Alemán)" [label="Relaciones Internacionales+
+Traductores e Interpretes (Alemán)" color="#FFDAB9"]
+			"Relaciones Internacionales + Traductores e Interpretes (Francés)" [label="Relaciones Internacionales+
+Traductores e Interpretes (Francés)" color="#FFDAB9"]
+		}
+	}
+	"Matemáticas_I" -> "Matemáticas_II"
+	Mates_Aplicadas_CCSS_I -> "Matemáticas_Aplicadas_CC.SS."
+	"Física_y_Química" -> "Física"
+	"Física_y_Química" -> "Química"
+	"Biología_y_Geología" -> "Biología"
+	"Biología_y_Geología" -> "Geología_y_Ciencias_Ambientales"
+	"Dibujo_Técnico_I" -> "Dibujo_Técnico_II"
+	"Dibujo_Técnico_I" -> "Dibujo_Técnico_aplicado_a_las_artes_plásticas_y_al_diseño_II"
+	"Latín_I" -> "Latín_II"
+	Griego_I -> Griego_II
+	"Economía" -> "Empresa_y_Diseño_de_modelos_de_negocio"
+	"Hª_Mundo_Contemporáneo" -> "Historia_de_la_Filosofía"
+	"Hª_Mundo_Contemporáneo" -> Historia_del_Arte
+	"Hª_Mundo_Contemporáneo" -> "Geografía"
+	"Historia_de_la_Filosofía" -> "Administración y Direccion de Empresas + Derecho" [color="#1f77b4" penwidth=2.5]
+	"Historia_de_la_Filosofía" -> "Antropología Social y Cultural" [color="#1f77b4" penwidth=2.5]
+	"Historia_de_la_Filosofía" -> "Arqueología" [color="#1f77b4" penwidth=2.5]
+	"Historia_de_la_Filosofía" -> "Bellas Artes" [color="#1f77b4" penwidth=2.5]
+	"Historia_de_la_Filosofía" -> "Ciencias Ambientales + Geografía e Historia" [color="#1f77b4" penwidth=2.5]
+	"Historia_de_la_Filosofía" -> "Ciencias Políticas y de la Administración" [color="#1f77b4" penwidth=2.5]
+	"Historia_de_la_Filosofía" -> "Ciencias Políticas y de la Administración + Periodismo" [color="#1f77b4" penwidth=2.5]
+	"Historia_de_la_Filosofía" -> "Ciencias Políticas y de la Administración + Sociología" [color="#1f77b4" penwidth=2.5]
+	"Historia_de_la_Filosofía" -> "Ciencias Políticas y de la Admon. + Admón. y Direccion de Empresas" [color="#1f77b4" penwidth=2.5]
+	"Historia_de_la_Filosofía" -> "Conservación y Rest.de Bienes Culturales" [color="#1f77b4" penwidth=2.5]
+	"Análisis_Musical_II" -> "Bellas Artes" [color="#1f77b4" penwidth=2.5]
+	"Análisis_Musical_II" -> "Educación Infantil" [color="#1f77b4" penwidth=2.5]
+	"Análisis_Musical_II" -> "Educación Infantil + Educación Primaria" [color="#1f77b4" penwidth=2.5]
+	"Análisis_Musical_II" -> "Educación Primaria" [color="#1f77b4" penwidth=2.5]
+	"Análisis_Musical_II" -> "Educación Primaria + CC. De la Actividad Física y del Deporte" [color="#1f77b4" penwidth=2.5]
+	"Análisis_Musical_II" -> "Educación Primaria + Estudios Franceses" [color="#1f77b4" penwidth=2.5]
+	"Análisis_Musical_II" -> "Educación Primaria + Estudios Ingleses" [color="#1f77b4" penwidth=2.5]
+	"Análisis_Musical_II" -> "Educación Social" [color="#1f77b4" penwidth=2.5]
+	"Análisis_Musical_II" -> "Historia + Historia del Arte" [color="#1f77b4" penwidth=2.5]
+	"Análisis_Musical_II" -> "Historia del Arte" [color="#1f77b4" penwidth=2.5]
+	"Artes_Escénicas_II" -> "Bellas Artes" [color="#aec7e8" penwidth=2.5]
+	"Artes_Escénicas_II" -> "Educación Infantil" [color="#aec7e8" penwidth=2.5]
+	"Artes_Escénicas_II" -> "Educación Infantil + Educación Primaria" [color="#aec7e8" penwidth=2.5]
+	"Artes_Escénicas_II" -> "Educación Primaria" [color="#aec7e8" penwidth=2.5]
+	"Artes_Escénicas_II" -> "Educación Primaria + CC. De la Actividad Física y del Deporte" [color="#aec7e8" penwidth=2.5]
+	"Artes_Escénicas_II" -> "Educación Primaria + Estudios Franceses" [color="#aec7e8" penwidth=2.5]
+	"Artes_Escénicas_II" -> "Educación Primaria + Estudios Ingleses" [color="#aec7e8" penwidth=2.5]
+	"Artes_Escénicas_II" -> "Educación Social" [color="#aec7e8" penwidth=2.5]
+	"Artes_Escénicas_II" -> "Historia + Historia del Arte" [color="#aec7e8" penwidth=2.5]
+	"Artes_Escénicas_II" -> "Historia del Arte" [color="#aec7e8" penwidth=2.5]
+	"Dibujo_Artístico_II" -> "Bellas Artes" [color="#ff7f0e" penwidth=2.5]
+	"Dibujo_Artístico_II" -> "Educación Infantil" [color="#ff7f0e" penwidth=2.5]
+	"Dibujo_Artístico_II" -> "Educación Infantil + Educación Primaria" [color="#ff7f0e" penwidth=2.5]
+	"Dibujo_Artístico_II" -> "Educación Primaria" [color="#ff7f0e" penwidth=2.5]
+	"Dibujo_Artístico_II" -> "Educación Primaria + CC. De la Actividad Física y del Deporte" [color="#ff7f0e" penwidth=2.5]
+	"Dibujo_Artístico_II" -> "Educación Primaria + Estudios Franceses" [color="#ff7f0e" penwidth=2.5]
+	"Dibujo_Artístico_II" -> "Educación Primaria + Estudios Ingleses" [color="#ff7f0e" penwidth=2.5]
+	"Dibujo_Artístico_II" -> "Educación Social" [color="#ff7f0e" penwidth=2.5]
+	"Dibujo_Artístico_II" -> "Historia + Historia del Arte" [color="#ff7f0e" penwidth=2.5]
+	"Dibujo_Artístico_II" -> "Historia del Arte" [color="#ff7f0e" penwidth=2.5]
+	"Latín_II" -> "Administración y Direccion de Empresas + Derecho" [color="#ffbb78" penwidth=2.5]
+	"Latín_II" -> "Arqueología" [color="#ffbb78" penwidth=2.5]
+	"Latín_II" -> "Bellas Artes" [color="#ffbb78" penwidth=2.5]
+	"Latín_II" -> "Ciencias Ambientales + Geografía e Historia" [color="#ffbb78" penwidth=2.5]
+	"Latín_II" -> "Conservación y Rest.de Bienes Culturales" [color="#ffbb78" penwidth=2.5]
+	"Latín_II" -> Derecho [color="#ffbb78" penwidth=2.5]
+	"Latín_II" -> "Derecho + Ciencias Políticas y de la Administración" [color="#ffbb78" penwidth=2.5]
+	"Latín_II" -> "Derecho + Criminología" [color="#ffbb78" penwidth=2.5]
+	"Latín_II" -> "Derecho + Criminología" [color="#ffbb78" penwidth=2.5]
+	"Latín_II" -> "Derecho + Criminología y Seguridad" [color="#ffbb78" penwidth=2.5]
+	"Matemáticas_II" -> "Administración y Dirección de Empresas" [color="#2ca02c" penwidth=2.5]
+	"Matemáticas_II" -> "Administración y Direccion de Empresas + Derecho" [color="#2ca02c" penwidth=2.5]
+	"Matemáticas_II" -> "Administración y Dirección de Empresas + Finanzas y Contabilidad" [color="#2ca02c" penwidth=2.5]
+	"Matemáticas_II" -> "Administración y Dirección de Empresas + Turismo" [color="#2ca02c" penwidth=2.5]
+	"Matemáticas_II" -> "Análisis Económico" [color="#2ca02c" penwidth=2.5]
+	"Matemáticas_II" -> "Arquitectura Naval e Ingeniería Marítima" [color="#2ca02c" penwidth=2.5]
+	"Matemáticas_II" -> "Biología" [color="#2ca02c" penwidth=2.5]
+	"Matemáticas_II" -> "Biomedicina Básica y Experimental" [color="#2ca02c" penwidth=2.5]
+	"Matemáticas_II" -> "Bioquímica" [color="#2ca02c" penwidth=2.5]
+	"Matemáticas_II" -> "Biotecnología" [color="#2ca02c" penwidth=2.5]
+	"Matemáticas_Aplicadas_CC.SS." -> "Administración y Dirección de Empresas" [color="#2ca02c" penwidth=2.5]
+	"Matemáticas_Aplicadas_CC.SS." -> "Administración y Direccion de Empresas + Derecho" [color="#2ca02c" penwidth=2.5]
+	"Matemáticas_Aplicadas_CC.SS." -> "Administración y Dirección de Empresas + Finanzas y Contabilidad" [color="#2ca02c" penwidth=2.5]
+	"Matemáticas_Aplicadas_CC.SS." -> "Administración y Dirección de Empresas + Turismo" [color="#2ca02c" penwidth=2.5]
+	"Matemáticas_Aplicadas_CC.SS." -> "Análisis Económico" [color="#2ca02c" penwidth=2.5]
+	"Matemáticas_Aplicadas_CC.SS." -> "Antropología Social y Cultural" [color="#2ca02c" penwidth=2.5]
+	"Matemáticas_Aplicadas_CC.SS." -> "Biología" [color="#2ca02c" penwidth=2.5]
+	"Matemáticas_Aplicadas_CC.SS." -> "Biomedicina Básica y Experimental" [color="#2ca02c" penwidth=2.5]
+	"Matemáticas_Aplicadas_CC.SS." -> "Bioquímica" [color="#2ca02c" penwidth=2.5]
+	"Matemáticas_Aplicadas_CC.SS." -> "Biotecnología" [color="#2ca02c" penwidth=2.5]
+	Ciencias_Generales -> "Biología" [color="#98df8a" penwidth=2.5]
+	Ciencias_Generales -> "Biomedicina Básica y Experimental" [color="#98df8a" penwidth=2.5]
+	Ciencias_Generales -> "Bioquímica" [color="#98df8a" penwidth=2.5]
+	Ciencias_Generales -> "Biotecnología" [color="#98df8a" penwidth=2.5]
+	Ciencias_Generales -> "Ciencia y Tecnología de los Alimentos" [color="#98df8a" penwidth=2.5]
+	Ciencias_Generales -> "Ciencias Ambientales" [color="#98df8a" penwidth=2.5]
+	Ciencias_Generales -> "Ciencias Ambientales + Ciencias del Mar" [color="#98df8a" penwidth=2.5]
+	Ciencias_Generales -> "Ciencias Ambientales + Geografía e Historia" [color="#98df8a" penwidth=2.5]
+	Ciencias_Generales -> "Ciencias Ambientales + Geología" [color="#98df8a" penwidth=2.5]
+	Ciencias_Generales -> "Ciencias Ambientales + Ingeniería Florestal y del Medio Natural" [color="#98df8a" penwidth=2.5]
+	"Biología" -> "Biología" [color="#d62728" penwidth=2.5]
+	"Biología" -> "Biomedicina Básica y Experimental" [color="#d62728" penwidth=2.5]
+	"Biología" -> "Bioquímica" [color="#d62728" penwidth=2.5]
+	"Biología" -> "Biotecnología" [color="#d62728" penwidth=2.5]
+	"Biología" -> "Ciencia y Tecnología de los Alimentos" [color="#d62728" penwidth=2.5]
+	"Biología" -> "Ciencias Ambientales" [color="#d62728" penwidth=2.5]
+	"Biología" -> "Ciencias Ambientales + Ciencias del Mar" [color="#d62728" penwidth=2.5]
+	"Biología" -> "Ciencias Ambientales + Geografía e Historia" [color="#d62728" penwidth=2.5]
+	"Biología" -> "Ciencias Ambientales + Geología" [color="#d62728" penwidth=2.5]
+	"Biología" -> "Ciencias Ambientales + Ingeniería Florestal y del Medio Natural" [color="#d62728" penwidth=2.5]
+	"Dibujo_Técnico_II" -> "Arquitectura Naval e Ingeniería Marítima" [color="#ff9896" penwidth=2.5]
+	"Dibujo_Técnico_II" -> "Ciberseguridad e Inteligencia Artificial" [color="#ff9896" penwidth=2.5]
+	"Dibujo_Técnico_II" -> "Edificación" [color="#ff9896" penwidth=2.5]
+	"Dibujo_Técnico_II" -> "Edificación + Administración y Dirección de Empresas" [color="#ff9896" penwidth=2.5]
+	"Dibujo_Técnico_II" -> "Enología + Ingeniería Agroalimentaria y del Medio Rural" [color="#ff9896" penwidth=2.5]
+	"Dibujo_Técnico_II" -> "Física + Ingeniería de Materiales" [color="#ff9896" penwidth=2.5]
+	"Dibujo_Técnico_II" -> "Física + Matemáticas" [color="#ff9896" penwidth=2.5]
+	"Dibujo_Técnico_II" -> "Fundamentos Arquitectura" [color="#ff9896" penwidth=2.5]
+	"Dibujo_Técnico_II" -> "Ingeniería Aeroespacial" [color="#ff9896" penwidth=2.5]
+	"Dibujo_Técnico_II" -> "Ingeniería Agricola" [color="#ff9896" penwidth=2.5]
+	"Física" -> "Arquitectura Naval e Ingeniería Marítima" [color="#9467bd" penwidth=2.5]
+	"Física" -> "Biología" [color="#9467bd" penwidth=2.5]
+	"Física" -> "Bioquímica" [color="#9467bd" penwidth=2.5]
+	"Física" -> "Biotecnología" [color="#9467bd" penwidth=2.5]
+	"Física" -> "Ciberseguridad e Inteligencia Artificial" [color="#9467bd" penwidth=2.5]
+	"Física" -> "Ciencia y Tecnología de los Alimentos" [color="#9467bd" penwidth=2.5]
+	"Física" -> "Ciencias Ambientales" [color="#9467bd" penwidth=2.5]
+	"Física" -> "Ciencias Ambientales + Ciencias del Mar" [color="#9467bd" penwidth=2.5]
+	"Física" -> "Ciencias Ambientales + Geografía e Historia" [color="#9467bd" penwidth=2.5]
+	"Física" -> "Ciencias Ambientales + Geología" [color="#9467bd" penwidth=2.5]
+	"Geología_y_Ciencias_Ambientales" -> "Biología" [color="#9467bd" penwidth=2.5]
+	"Geología_y_Ciencias_Ambientales" -> "Ciencias Ambientales" [color="#9467bd" penwidth=2.5]
+	"Geología_y_Ciencias_Ambientales" -> "Ciencias Ambientales + Ciencias del Mar" [color="#9467bd" penwidth=2.5]
+	"Geología_y_Ciencias_Ambientales" -> "Ciencias Ambientales + Geografía e Historia" [color="#9467bd" penwidth=2.5]
+	"Geología_y_Ciencias_Ambientales" -> "Ciencias Ambientales + Geología" [color="#9467bd" penwidth=2.5]
+	"Geología_y_Ciencias_Ambientales" -> "Ciencias Ambientales + Ingeniería Florestal y del Medio Natural" [color="#9467bd" penwidth=2.5]
+	"Geología_y_Ciencias_Ambientales" -> "Ciencias del Mar" [color="#9467bd" penwidth=2.5]
+	"Geología_y_Ciencias_Ambientales" -> "Edificación" [color="#9467bd" penwidth=2.5]
+	"Geología_y_Ciencias_Ambientales" -> "Edificación + Administración y Dirección de Empresas" [color="#9467bd" penwidth=2.5]
+	"Geología_y_Ciencias_Ambientales" -> "Educación Infantil" [color="#9467bd" penwidth=2.5]
+	"Tecnología_e_Ingeniería_II" -> "Arquitectura Naval e Ingeniería Marítima" [color="#c5b0d5" penwidth=2.5]
+	"Tecnología_e_Ingeniería_II" -> "Biología" [color="#c5b0d5" penwidth=2.5]
+	"Tecnología_e_Ingeniería_II" -> "Bioquímica" [color="#c5b0d5" penwidth=2.5]
+	"Tecnología_e_Ingeniería_II" -> "Biotecnología" [color="#c5b0d5" penwidth=2.5]
+	"Tecnología_e_Ingeniería_II" -> "Ciberseguridad e Inteligencia Artificial" [color="#c5b0d5" penwidth=2.5]
+	"Tecnología_e_Ingeniería_II" -> "Ciencia y Tecnología de los Alimentos" [color="#c5b0d5" penwidth=2.5]
+	"Tecnología_e_Ingeniería_II" -> "Ciencias Ambientales" [color="#c5b0d5" penwidth=2.5]
+	"Tecnología_e_Ingeniería_II" -> "Ciencias Ambientales + Ciencias del Mar" [color="#c5b0d5" penwidth=2.5]
+	"Tecnología_e_Ingeniería_II" -> "Ciencias Ambientales + Geografía e Historia" [color="#c5b0d5" penwidth=2.5]
+	"Tecnología_e_Ingeniería_II" -> "Ciencias Ambientales + Geología" [color="#c5b0d5" penwidth=2.5]
+	"Química" -> "Biología" [color="#8c564b" penwidth=2.5]
+	"Química" -> "Biomedicina Básica y Experimental" [color="#8c564b" penwidth=2.5]
+	"Química" -> "Bioquímica" [color="#8c564b" penwidth=2.5]
+	"Química" -> "Biotecnología" [color="#8c564b" penwidth=2.5]
+	"Química" -> "Ciencia y Tecnología de los Alimentos" [color="#8c564b" penwidth=2.5]
+	"Química" -> "Ciencias Ambientales" [color="#8c564b" penwidth=2.5]
+	"Química" -> "Ciencias Ambientales + Ciencias del Mar" [color="#8c564b" penwidth=2.5]
+	"Química" -> "Ciencias Ambientales + Geografía e Historia" [color="#8c564b" penwidth=2.5]
+	"Química" -> "Ciencias Ambientales + Geología" [color="#8c564b" penwidth=2.5]
+	"Química" -> "Ciencias Ambientales + Ingeniería Florestal y del Medio Natural" [color="#8c564b" penwidth=2.5]
+	"Empresa_y_Diseño_de_modelos_de_negocio" -> "Administración y Dirección de Empresas" [color="#c49c94" penwidth=2.5]
+	"Empresa_y_Diseño_de_modelos_de_negocio" -> "Administración y Direccion de Empresas + Derecho" [color="#c49c94" penwidth=2.5]
+	"Empresa_y_Diseño_de_modelos_de_negocio" -> "Administración y Dirección de Empresas + Finanzas y Contabilidad" [color="#c49c94" penwidth=2.5]
+	"Empresa_y_Diseño_de_modelos_de_negocio" -> "Administración y Dirección de Empresas + Turismo" [color="#c49c94" penwidth=2.5]
+	"Empresa_y_Diseño_de_modelos_de_negocio" -> "Análisis Económico" [color="#c49c94" penwidth=2.5]
+	"Empresa_y_Diseño_de_modelos_de_negocio" -> "Ciencias de la Actividad Física y del Deporte" [color="#c49c94" penwidth=2.5]
+	"Empresa_y_Diseño_de_modelos_de_negocio" -> "Ciencias Gastronómicas y Gestión Hotelera" [color="#c49c94" penwidth=2.5]
+	"Empresa_y_Diseño_de_modelos_de_negocio" -> "Ciencias Políticas y de la Administración" [color="#c49c94" penwidth=2.5]
+	"Empresa_y_Diseño_de_modelos_de_negocio" -> "Ciencias Políticas y de la Administración + Periodismo" [color="#c49c94" penwidth=2.5]
+	"Empresa_y_Diseño_de_modelos_de_negocio" -> "Ciencias Políticas y de la Administración + Sociología" [color="#c49c94" penwidth=2.5]
+	"Geografía" -> "Administración y Dirección de Empresas" [color="#e377c2" penwidth=2.5]
+	"Geografía" -> "Administración y Direccion de Empresas + Derecho" [color="#e377c2" penwidth=2.5]
+	"Geografía" -> "Administración y Dirección de Empresas + Finanzas y Contabilidad" [color="#e377c2" penwidth=2.5]
+	"Geografía" -> "Administración y Dirección de Empresas + Turismo" [color="#e377c2" penwidth=2.5]
+	"Geografía" -> "Análisis Económico" [color="#e377c2" penwidth=2.5]
+	"Geografía" -> "Antropología Social y Cultural" [color="#e377c2" penwidth=2.5]
+	"Geografía" -> "Arqueología" [color="#e377c2" penwidth=2.5]
+	"Geografía" -> "Ciencias Ambientales + Geografía e Historia" [color="#e377c2" penwidth=2.5]
+	"Geografía" -> "Ciencias Gastronómicas y Gestión Hotelera" [color="#e377c2" penwidth=2.5]
+	"Geografía" -> "Ciencias Políticas y de la Administración" [color="#e377c2" penwidth=2.5]
+	Griego_II -> "Antropología Social y Cultural" [color="#e377c2" penwidth=2.5]
+	Griego_II -> "Arqueología" [color="#e377c2" penwidth=2.5]
+	Griego_II -> "Ciencias Ambientales + Geografía e Historia" [color="#e377c2" penwidth=2.5]
+	Griego_II -> "Derecho + Filosofía" [color="#e377c2" penwidth=2.5]
+	Griego_II -> "Educación Infantil" [color="#e377c2" penwidth=2.5]
+	Griego_II -> "Educación Infantil + Educación Primaria" [color="#e377c2" penwidth=2.5]
+	Griego_II -> "Educación Primaria" [color="#e377c2" penwidth=2.5]
+	Griego_II -> "Educación Primaria + CC. De la Actividad Física y del Deporte" [color="#e377c2" penwidth=2.5]
+	Griego_II -> "Educación Primaria + Estudios Franceses" [color="#e377c2" penwidth=2.5]
+	Griego_II -> "Educación Primaria + Estudios Ingleses" [color="#e377c2" penwidth=2.5]
+	Historia_del_Arte -> "Antropología Social y Cultural" [color="#f7b6d2" penwidth=2.5]
+	Historia_del_Arte -> "Arqueología" [color="#f7b6d2" penwidth=2.5]
+	Historia_del_Arte -> "Bellas Artes" [color="#f7b6d2" penwidth=2.5]
+	Historia_del_Arte -> "Ciencias Ambientales + Geografía e Historia" [color="#f7b6d2" penwidth=2.5]
+	Historia_del_Arte -> "Conservación y Rest.de Bienes Culturales" [color="#f7b6d2" penwidth=2.5]
+	Historia_del_Arte -> "Derecho + Filosofía" [color="#f7b6d2" penwidth=2.5]
+	Historia_del_Arte -> "Educación Infantil" [color="#f7b6d2" penwidth=2.5]
+	Historia_del_Arte -> "Educación Infantil + Educación Primaria" [color="#f7b6d2" penwidth=2.5]
+	Historia_del_Arte -> "Educación Primaria" [color="#f7b6d2" penwidth=2.5]
+	Historia_del_Arte -> "Educación Primaria + CC. De la Actividad Física y del Deporte" [color="#f7b6d2" penwidth=2.5]
+	"Dibujo_Técnico_aplicado_a_las_artes_plásticas_y_al_diseño_II" -> "Bellas Artes" [color="#7f7f7f" penwidth=2.5]
+	"Dibujo_Técnico_aplicado_a_las_artes_plásticas_y_al_diseño_II" -> "Ciencias Políticas y de la Administración + Periodismo" [color="#7f7f7f" penwidth=2.5]
+	"Dibujo_Técnico_aplicado_a_las_artes_plásticas_y_al_diseño_II" -> "Comunicación" [color="#7f7f7f" penwidth=2.5]
+	"Dibujo_Técnico_aplicado_a_las_artes_plásticas_y_al_diseño_II" -> "Comunicación + Comunicación Digital" [color="#7f7f7f" penwidth=2.5]
+	"Dibujo_Técnico_aplicado_a_las_artes_plásticas_y_al_diseño_II" -> "Comunicación Audiovisual" [color="#7f7f7f" penwidth=2.5]
+	"Dibujo_Técnico_aplicado_a_las_artes_plásticas_y_al_diseño_II" -> "Comunicación Digital" [color="#7f7f7f" penwidth=2.5]
+	"Dibujo_Técnico_aplicado_a_las_artes_plásticas_y_al_diseño_II" -> "Conservación y Rest.de Bienes Culturales" [color="#7f7f7f" penwidth=2.5]
+	"Dibujo_Técnico_aplicado_a_las_artes_plásticas_y_al_diseño_II" -> "Márketing e Investigación de Mercados" [color="#7f7f7f" penwidth=2.5]
+	"Dibujo_Técnico_aplicado_a_las_artes_plásticas_y_al_diseño_II" -> "Márketing e Investigación de Mercados + Turismo" [color="#7f7f7f" penwidth=2.5]
+	"Dibujo_Técnico_aplicado_a_las_artes_plásticas_y_al_diseño_II" -> Periodismo [color="#7f7f7f" penwidth=2.5]
+	"Diseño" -> "Bellas Artes" [color="#c7c7c7" penwidth=2.5]
+	"Diseño" -> "Ciencias Políticas y de la Administración + Periodismo" [color="#c7c7c7" penwidth=2.5]
+	"Diseño" -> "Comunicación" [color="#c7c7c7" penwidth=2.5]
+	"Diseño" -> "Comunicación + Comunicación Digital" [color="#c7c7c7" penwidth=2.5]
+	"Diseño" -> "Comunicación Audiovisual" [color="#c7c7c7" penwidth=2.5]
+	"Diseño" -> "Comunicación Digital" [color="#c7c7c7" penwidth=2.5]
+	"Diseño" -> "Conservación y Rest.de Bienes Culturales" [color="#c7c7c7" penwidth=2.5]
+	"Diseño" -> "Márketing e Investigación de Mercados" [color="#c7c7c7" penwidth=2.5]
+	"Diseño" -> "Márketing e Investigación de Mercados + Turismo" [color="#c7c7c7" penwidth=2.5]
+	"Diseño" -> Periodismo [color="#c7c7c7" penwidth=2.5]
+	"Fundamentos_Artísticos" -> "Antropología Social y Cultural" [color="#bcbd22" penwidth=2.5]
+	"Fundamentos_Artísticos" -> "Arqueología" [color="#bcbd22" penwidth=2.5]
+	"Fundamentos_Artísticos" -> "Bellas Artes" [color="#bcbd22" penwidth=2.5]
+	"Fundamentos_Artísticos" -> "Ciencias Ambientales + Geografía e Historia" [color="#bcbd22" penwidth=2.5]
+	"Fundamentos_Artísticos" -> "Conservación y Rest.de Bienes Culturales" [color="#bcbd22" penwidth=2.5]
+	"Fundamentos_Artísticos" -> "Educación Infantil" [color="#bcbd22" penwidth=2.5]
+	"Fundamentos_Artísticos" -> "Educación Infantil + Educación Primaria" [color="#bcbd22" penwidth=2.5]
+	"Fundamentos_Artísticos" -> "Educación Primaria" [color="#bcbd22" penwidth=2.5]
+	"Fundamentos_Artísticos" -> "Educación Primaria + CC. De la Actividad Física y del Deporte" [color="#bcbd22" penwidth=2.5]
+	"Fundamentos_Artísticos" -> "Educación Primaria + Estudios Franceses" [color="#bcbd22" penwidth=2.5]
+	"Técnicas_de_Expresión_Gráfico__Plástica" -> "Bellas Artes" [color="#bcbd22" penwidth=2.5]
+	"Técnicas_de_Expresión_Gráfico__Plástica" -> "Educación Infantil" [color="#bcbd22" penwidth=2.5]
+	"Técnicas_de_Expresión_Gráfico__Plástica" -> "Educación Infantil + Educación Primaria" [color="#bcbd22" penwidth=2.5]
+	"Técnicas_de_Expresión_Gráfico__Plástica" -> "Educación Primaria" [color="#bcbd22" penwidth=2.5]
+	"Técnicas_de_Expresión_Gráfico__Plástica" -> "Educación Primaria + CC. De la Actividad Física y del Deporte" [color="#bcbd22" penwidth=2.5]
+	"Técnicas_de_Expresión_Gráfico__Plástica" -> "Educación Primaria + Estudios Franceses" [color="#bcbd22" penwidth=2.5]
+	"Técnicas_de_Expresión_Gráfico__Plástica" -> "Educación Primaria + Estudios Ingleses" [color="#bcbd22" penwidth=2.5]
+	"Técnicas_de_Expresión_Gráfico__Plástica" -> "Educación Social" [color="#bcbd22" penwidth=2.5]
+	"Técnicas_de_Expresión_Gráfico__Plástica" -> "Historia + Historia del Arte" [color="#bcbd22" penwidth=2.5]
+	"Técnicas_de_Expresión_Gráfico__Plástica" -> "Historia del Arte" [color="#bcbd22" penwidth=2.5]
+	"Coro_y_Técnica_Vocal_II" -> "Bellas Artes" [color="#dbdb8d" penwidth=2.5]
+	"Coro_y_Técnica_Vocal_II" -> "Educación Infantil" [color="#dbdb8d" penwidth=2.5]
+	"Coro_y_Técnica_Vocal_II" -> "Educación Infantil + Educación Primaria" [color="#dbdb8d" penwidth=2.5]
+	"Coro_y_Técnica_Vocal_II" -> "Educación Primaria" [color="#dbdb8d" penwidth=2.5]
+	"Coro_y_Técnica_Vocal_II" -> "Educación Primaria + CC. De la Actividad Física y del Deporte" [color="#dbdb8d" penwidth=2.5]
+	"Coro_y_Técnica_Vocal_II" -> "Educación Primaria + Estudios Franceses" [color="#dbdb8d" penwidth=2.5]
+	"Coro_y_Técnica_Vocal_II" -> "Educación Primaria + Estudios Ingleses" [color="#dbdb8d" penwidth=2.5]
+	"Coro_y_Técnica_Vocal_II" -> "Educación Social" [color="#dbdb8d" penwidth=2.5]
+	"Coro_y_Técnica_Vocal_II" -> "Historia y Ciencias de la Música" [color="#dbdb8d" penwidth=2.5]
+	"Coro_y_Técnica_Vocal_II" -> "Trabajo Social + Educación Social" [color="#dbdb8d" penwidth=2.5]
+	"Historia_nde_la_música_y_de_la_danza" -> "Bellas Artes" [color="#17becf" penwidth=2.5]
+	"Historia_nde_la_música_y_de_la_danza" -> "Educación Infantil" [color="#17becf" penwidth=2.5]
+	"Historia_nde_la_música_y_de_la_danza" -> "Educación Infantil + Educación Primaria" [color="#17becf" penwidth=2.5]
+	"Historia_nde_la_música_y_de_la_danza" -> "Educación Primaria" [color="#17becf" penwidth=2.5]
+	"Historia_nde_la_música_y_de_la_danza" -> "Educación Primaria + CC. De la Actividad Física y del Deporte" [color="#17becf" penwidth=2.5]
+	"Historia_nde_la_música_y_de_la_danza" -> "Educación Primaria + Estudios Franceses" [color="#17becf" penwidth=2.5]
+	"Historia_nde_la_música_y_de_la_danza" -> "Educación Primaria + Estudios Ingleses" [color="#17becf" penwidth=2.5]
+	"Historia_nde_la_música_y_de_la_danza" -> "Educación Social" [color="#17becf" penwidth=2.5]
+	"Historia_nde_la_música_y_de_la_danza" -> "Estudios Transculturales Europeos":" Lenguas, Culturas, Interacciones" [color="#17becf" penwidth=2.5]
+	"Historia_nde_la_música_y_de_la_danza" -> "Gestión Cultural" [color="#17becf" penwidth=2.5]
+	"Literatura_dramática" -> "Bellas Artes" [color="#9edae5" penwidth=2.5]
+	"Literatura_dramática" -> "Educación Infantil" [color="#9edae5" penwidth=2.5]
+	"Literatura_dramática" -> "Educación Infantil + Educación Primaria" [color="#9edae5" penwidth=2.5]
+	"Literatura_dramática" -> "Educación Primaria" [color="#9edae5" penwidth=2.5]
+	"Literatura_dramática" -> "Educación Primaria + CC. De la Actividad Física y del Deporte" [color="#9edae5" penwidth=2.5]
+	"Literatura_dramática" -> "Educación Primaria + Estudios Franceses" [color="#9edae5" penwidth=2.5]
+	"Literatura_dramática" -> "Educación Primaria + Estudios Ingleses" [color="#9edae5" penwidth=2.5]
+	"Literatura_dramática" -> "Educación Social" [color="#9edae5" penwidth=2.5]
+	"Literatura_dramática" -> "Estudios Arabes e Islámicos" [color="#9edae5" penwidth=2.5]
+	"Literatura_dramática" -> "Estudios Árabes e Islámicos + Estudios Ingleses" [color="#9edae5" penwidth=2.5]
+	"Movimientos_Culturales_y_Artísticos" -> "Antropología Social y Cultural" [color="#9edae5" penwidth=2.5]
+	"Movimientos_Culturales_y_Artísticos" -> "Arqueología" [color="#9edae5" penwidth=2.5]
+	"Movimientos_Culturales_y_Artísticos" -> "Bellas Artes" [color="#9edae5" penwidth=2.5]
+	"Movimientos_Culturales_y_Artísticos" -> "Ciencias Ambientales + Geografía e Historia" [color="#9edae5" penwidth=2.5]
+	"Movimientos_Culturales_y_Artísticos" -> "Conservación y Rest.de Bienes Culturales" [color="#9edae5" penwidth=2.5]
+	"Movimientos_Culturales_y_Artísticos" -> "Derecho + Filosofía" [color="#9edae5" penwidth=2.5]
+	"Movimientos_Culturales_y_Artísticos" -> "Educación Infantil" [color="#9edae5" penwidth=2.5]
+	"Movimientos_Culturales_y_Artísticos" -> "Educación Infantil + Educación Primaria" [color="#9edae5" penwidth=2.5]
+	"Movimientos_Culturales_y_Artísticos" -> "Educación Primaria" [color="#9edae5" penwidth=2.5]
+	"Movimientos_Culturales_y_Artísticos" -> "Educación Primaria + CC. De la Actividad Física y del Deporte" [color="#9edae5" penwidth=2.5]
+}
