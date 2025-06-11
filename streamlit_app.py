@@ -275,7 +275,7 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
           "direction": "LR",
           "sortMethod": "directed",
           "shakeTowards": "roots",
-          "levelSeparation": 250,
+          "levelSeparation": 1000,
           "nodeSpacing": 120,
           "treeSpacing": 200,
           "blockShifting": true,
