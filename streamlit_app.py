@@ -319,69 +319,114 @@ if df_ponderaciones_original is not None:
     )
 
     if modo_visualizacion == 'Tabla de Ponderaciones':
-        st.subheader("📜 Tabla Completa de Ponderaciones")
-        st.markdown("Puedes ordenar y buscar en la tabla. Las columnas de asignaturas muestran su ponderación (0.1, 0.15 o 0.2).")
+        st.subheader("📜 Tabla de Ponderaciones")
         
-        # Filtro por Rama (ya existente)
-        rama_seleccionada_tabla = st.selectbox(
-            "Filtrar por Rama de Conocimiento (opcional):",
-            options=['Todas'] + ramas_conocimiento_disponibles,
-            index=0,
-            key="tabla_rama_filter"
+        # Radio button to switch between table views
+        vista_tabla = st.radio(
+            "Ver tabla por:",
+            ("Grados (vista tradicional)", "Asignaturas (qué grados ponderan)"),
+            key="vista_tabla_tipo"
         )
 
-        df_filtrado_tabla = df_ponderaciones_original.copy()
-        if rama_seleccionada_tabla != 'Todas':
-            df_filtrado_tabla = df_filtrado_tabla[df_filtrado_tabla['Rama_de_conocimiento'] == rama_seleccionada_tabla]
-
-        # Filtro multiselect para Grados
-        grados_disponibles_tabla = sorted(df_filtrado_tabla['Grado'].unique())
-        grados_seleccionados_tabla = st.multiselect(
-            "Filtrar por Grados Específicos (opcional):",
-            options=grados_disponibles_tabla,
-            default=[],
-            key="tabla_grados_filter"
-        )
-        if grados_seleccionados_tabla:
-            df_filtrado_tabla = df_filtrado_tabla[df_filtrado_tabla['Grado'].isin(grados_seleccionados_tabla)]
-
-        # Filtro multiselect para Asignaturas de Bachillerato (columnas de ponderación)
-        # Tomar todas las asignaturas del df original para que la lista sea completa
         todas_asignaturas_ponderables = [col for col in df_ponderaciones_original.columns if col not in ['Grado', 'Rama_de_conocimiento']]
         map_asignaturas_display_tabla = {asig: asig.replace('_', ' ').replace('.', ' ') for asig in todas_asignaturas_ponderables}
-        
-        asignaturas_seleccionadas_tabla_display = st.multiselect(
-            "Seleccionar Asignaturas de 2º Bachillerato a mostrar (columnas, opcional):",
-            options=sorted(list(map_asignaturas_display_tabla.values())), # Mostrar nombres "limpios"
-            default=[], # Por defecto ninguna, o podrías poner todas
-            key="tabla_asignaturas_filter"
-        )
-        
-        # Convertir nombres de display seleccionados de nuevo a nombres de columna originales
-        asignaturas_seleccionadas_tabla_cols = [col_original for col_original, col_display in map_asignaturas_display_tabla.items() if col_display in asignaturas_seleccionadas_tabla_display]
 
-        columnas_a_mostrar = ['Grado', 'Rama_de_conocimiento']
-        if asignaturas_seleccionadas_tabla_cols:
-            columnas_a_mostrar.extend(asignaturas_seleccionadas_tabla_cols)
-        elif not asignaturas_seleccionadas_tabla_display: # Si no se selecciona ninguna, mostrar todas las disponibles en el df_filtrado_tabla
-            columnas_a_mostrar.extend([col for col in df_filtrado_tabla.columns if col not in ['Grado', 'Rama_de_conocimiento']])
+        if vista_tabla == "Grados (vista tradicional)":
+            st.markdown("Puedes ordenar y buscar en la tabla. Las columnas de asignaturas muestran su ponderación (0.1, 0.15 o 0.2).")
+            
+            # Filtro por Rama (ya existente)
+            rama_seleccionada_tabla = st.selectbox(
+                "Filtrar por Rama de Conocimiento (opcional):",
+                options=['Todas'] + ramas_conocimiento_disponibles,
+                index=0,
+                key="tabla_rama_filter_grados" # Changed key to avoid conflict
+            )
 
+            df_filtrado_tabla = df_ponderaciones_original.copy()
+            if rama_seleccionada_tabla != 'Todas':
+                df_filtrado_tabla = df_filtrado_tabla[df_filtrado_tabla['Rama_de_conocimiento'] == rama_seleccionada_tabla]
 
-        # Asegurarse de que las columnas seleccionadas existen en el df_filtrado_tabla antes de intentar mostrarlas
-        columnas_finales_tabla = [col for col in columnas_a_mostrar if col in df_filtrado_tabla.columns]
-        if 'Grado' not in columnas_finales_tabla: # Asegurar que Grado siempre esté si existe
-            columnas_finales_tabla.insert(0, 'Grado')
-        
-        # Eliminar duplicados manteniendo el orden
-        from collections import OrderedDict
-        columnas_finales_tabla = list(OrderedDict.fromkeys(columnas_finales_tabla))
+            # Filtro multiselect para Grados
+            grados_disponibles_tabla = sorted(df_filtrado_tabla['Grado'].unique())
+            grados_seleccionados_tabla = st.multiselect(
+                "Filtrar por Grados Específicos (opcional):",
+                options=grados_disponibles_tabla,
+                default=[],
+                key="tabla_grados_filter"
+            )
+            if grados_seleccionados_tabla:
+                df_filtrado_tabla = df_filtrado_tabla[df_filtrado_tabla['Grado'].isin(grados_seleccionados_tabla)]
+            
+            asignaturas_seleccionadas_tabla_display = st.multiselect(
+                "Seleccionar Asignaturas de 2º Bachillerato a mostrar (columnas, opcional):",
+                options=sorted(list(map_asignaturas_display_tabla.values())), 
+                default=[], 
+                key="tabla_asignaturas_filter_grados" # Changed key
+            )
+            
+            asignaturas_seleccionadas_tabla_cols = [col_original for col_original, col_display in map_asignaturas_display_tabla.items() if col_display in asignaturas_seleccionadas_tabla_display]
 
+            columnas_a_mostrar = ['Grado', 'Rama_de_conocimiento']
+            if asignaturas_seleccionadas_tabla_cols:
+                columnas_a_mostrar.extend(asignaturas_seleccionadas_tabla_cols) # Corrected from columnas_a_mantener
+            elif not asignaturas_seleccionadas_tabla_display: 
+                columnas_a_mostrar.extend([col for col in df_filtrado_tabla.columns if col not in ['Grado', 'Rama_de_conocimiento']]) # Corrected from columnas_a_mantener
 
-        if not df_filtrado_tabla.empty:
-            st.dataframe(df_filtrado_tabla[columnas_finales_tabla].set_index('Grado'), height=600)
-        else:
-            st.info("No hay datos para mostrar con los filtros seleccionados.")
+            columnas_finales_tabla = [col for col in columnas_a_mostrar if col in df_filtrado_tabla.columns]
+            if 'Grado' not in columnas_finales_tabla and 'Grado' in df_filtrado_tabla.columns: 
+                columnas_finales_tabla.insert(0, 'Grado')
+            
+            from collections import OrderedDict
+            columnas_finales_tabla = list(OrderedDict.fromkeys(columnas_finales_tabla))
 
+            if not df_filtrado_tabla.empty and 'Grado' in columnas_finales_tabla:
+                st.dataframe(df_filtrado_tabla[columnas_finales_tabla].set_index('Grado'), height=600)
+            elif not df_filtrado_tabla.empty:
+                 st.dataframe(df_filtrado_tabla[columnas_finales_tabla], height=600) # Fallback if Grado is not indexable
+            else:
+                st.info("No hay datos para mostrar con los filtros seleccionados.")
+
+        elif vista_tabla == "Asignaturas (qué grados ponderan)":
+            st.markdown("Selecciona una o varias asignaturas de 2º Bachillerato para ver qué grados las ponderan con 0.2 (y opcionalmente 0.15).")
+
+            asignaturas_para_analisis_display = st.multiselect(
+                "Seleccionar Asignaturas de 2º Bachillerato:",
+                options=sorted(list(map_asignaturas_display_tabla.values())),
+                default=[],
+                key="tabla_asignaturas_analisis_filter"
+            )
+            asignaturas_para_analisis_cols = [col_original for col_original, col_display in map_asignaturas_display_tabla.items() if col_display in asignaturas_para_analisis_display]
+
+            incluir_015_tabla_asignatura = st.checkbox("Incluir ponderaciones de 0.15 (además de 0.2)", value=False, key="tabla_incluir_015_asignatura")
+
+            if asignaturas_para_analisis_cols:
+                df_melted = df_ponderaciones_original.melt(
+                    id_vars=['Grado', 'Rama_de_conocimiento'],
+                    value_vars=asignaturas_para_analisis_cols,
+                    var_name='Asignatura_Original', # Store original column name
+                    value_name='Ponderacion'
+                )
+                
+                # Map to display names for the 'Asignatura' column after melting
+                df_melted['Asignatura'] = df_melted['Asignatura_Original'].map(map_asignaturas_display_tabla)
+
+                ponderaciones_a_buscar = [0.2]
+                if incluir_015_tabla_asignatura:
+                    ponderaciones_a_buscar.append(0.15)
+                
+                df_resultado_asignaturas = df_melted[df_melted['Ponderacion'].isin(ponderaciones_a_buscar)]
+                
+                if not df_resultado_asignaturas.empty:
+                    df_resultado_asignaturas = df_resultado_asignaturas.sort_values(by=['Asignatura', 'Ponderacion', 'Grado'], ascending=[True, False, True])
+                    st.dataframe(
+                        df_resultado_asignaturas[['Asignatura', 'Grado', 'Rama_de_conocimiento', 'Ponderacion']],
+                        height=600,
+                        use_container_width=True
+                    )
+                else:
+                    st.info("No se encontraron grados con las ponderaciones especificadas para las asignaturas seleccionadas.")
+            else:
+                st.info("Por favor, selecciona al menos una asignatura para analizar.")
 
     elif modo_visualizacion == 'Gráfico Interactivo de Flujo':
         st.subheader("🌊 Gráfico de Flujo Académico Interactivo")
@@ -480,32 +525,35 @@ if df_ponderaciones_original is not None:
         ]
         map_asignaturas_display = {asig: asig.replace('_', ' ').replace('.', ' ') for asig in asignaturas_ponderables_cols}
         
-        with st.form(key='calculadora_form'):
-            col1, col2 = st.columns(2)
-            with col1:
-                nota_bachillerato = st.number_input("Nota media de Bachillerato (sobre 10):", min_value=0.0, max_value=10.0, value=7.5, step=0.01, format="%.2f")
-            with col2:
-                nota_fase_general = st.number_input("Nota de la Fase General (EvAU/PEvAU, sobre 10):", min_value=0.0, max_value=10.0, value=7.0, step=0.01, format="%.2f")
-            
-            st.markdown("---")
-            st.markdown("#### Selección de Grado y Asignaturas Específicas")
+        # Selector de Grado (fuera del formulario para que actualice dinámicamente el contenido)
+        grado_seleccionado_calc = st.selectbox(
+            "Selecciona el Grado Universitario al que quieres acceder:",
+            options=[''] + sorted(df_ponderaciones_original['Grado'].unique()),
+            index=0,
+            format_func=lambda x: 'Selecciona un grado...' if x == '' else x,
+            key='grado_seleccionado_calculadora_main' 
+        )
 
-            grado_seleccionado_calc = st.selectbox(
-                "Selecciona el Grado Universitario al que quieres acceder:",
-                options=[''] + sorted(df_ponderaciones_original['Grado'].unique()),
-                index=0,
-                format_func=lambda x: 'Selecciona un grado...' if x == '' else x
-            )
+        if grado_seleccionado_calc:
+            ponderaciones_grado = df_ponderaciones_original[df_ponderaciones_original['Grado'] == grado_seleccionado_calc].iloc[0]
+            asignaturas_que_ponderan_para_grado = {
+                asig: ponderaciones_grado[asig] 
+                for asig in asignaturas_ponderables_cols 
+                if ponderaciones_grado.get(asig, 0) > 0 # Solo las que ponderan > 0
+            }
 
-            if grado_seleccionado_calc:
-                ponderaciones_grado = df_ponderaciones_original[df_ponderaciones_original['Grado'] == grado_seleccionado_calc].iloc[0]
+            with st.form(key='calculadora_form_inner'):
+                col1, col2 = st.columns(2)
+                with col1:
+                    nota_bachillerato = st.number_input("Nota media de Bachillerato (sobre 10):", min_value=0.0, max_value=10.0, value=7.5, step=0.01, format="%.2f", key="calc_nota_bach")
+                with col2:
+                    nota_fase_general = st.number_input("Nota de la Fase General (EvAU/PEvAU, sobre 10):", min_value=0.0, max_value=10.0, value=7.0, step=0.01, format="%.2f", key="calc_nota_fase_gen")
                 
-                asignaturas_que_ponderan_para_grado = {
-                    asig: ponderaciones_grado[asig] 
-                    for asig in asignaturas_ponderables_cols 
-                    if ponderaciones_grado.get(asig, 0) > 0 # Solo las que ponderan > 0
-                }
+                st.markdown("---")
+                st.markdown("#### Selección de Asignaturas Específicas")
                 
+                notas_asignaturas_elegidas = {}
+
                 if not asignaturas_que_ponderan_para_grado:
                     st.warning("Este grado no tiene asignaturas específicas con ponderación > 0 en nuestros datos.")
                 else:
@@ -516,64 +564,63 @@ if df_ponderaciones_original is not None:
                         for asig, ponderacion in sorted(asignaturas_que_ponderan_para_grado.items(), key=lambda item: item[0]) # Ordenar alfabéticamente
                     }
                     
-                    notas_asignaturas_elegidas = {}
-                    
                     # Selectores para las dos asignaturas
-                    asig1_display = st.selectbox("Asignatura Específica 1 (opcional):", options=[''] + list(opciones_fase_especifica.keys()), format_func=lambda x: 'Ninguna' if x == '' else x, key='asig1_sel')
+                    asig1_display = st.selectbox("Asignatura Específica 1 (opcional):", options=[''] + list(opciones_fase_especifica.keys()), format_func=lambda x: 'Ninguna' if x == '' else x, key='calc_asig1_sel')
                     if asig1_display:
                         asig1_original = opciones_fase_especifica[asig1_display]
-                        notas_asignaturas_elegidas[asig1_original] = st.number_input(f"Nota en {map_asignaturas_display[asig1_original]}:", min_value=0.0, max_value=10.0, value=5.0, step=0.1, format="%.1f", key=f"nota_{asig1_original}")
+                        notas_asignaturas_elegidas[asig1_original] = st.number_input(f"Nota en {map_asignaturas_display[asig1_original]}:", min_value=0.0, max_value=10.0, value=5.0, step=0.1, format="%.1f", key=f"calc_nota_{asig1_original}")
 
                     # Filtrar opciones para la segunda asignatura para no repetir la primera
                     opciones_asig2 = {k:v for k,v in opciones_fase_especifica.items() if k != asig1_display} if asig1_display else opciones_fase_especifica
                     
-                    asig2_display = st.selectbox("Asignatura Específica 2 (opcional):", options=[''] + list(opciones_asig2.keys()), format_func=lambda x: 'Ninguna' if x == '' else x, key='asig2_sel')
+                    asig2_display = st.selectbox("Asignatura Específica 2 (opcional):", options=[''] + list(opciones_asig2.keys()), format_func=lambda x: 'Ninguna' if x == '' else x, key='calc_asig2_sel')
                     if asig2_display:
                         asig2_original = opciones_fase_especifica[asig2_display] # Usar opciones_fase_especifica para el mapeo original
-                        notas_asignaturas_elegidas[asig2_original] = st.number_input(f"Nota en {map_asignaturas_display[asig2_original]}:", min_value=0.0, max_value=10.0, value=5.0, step=0.1, format="%.1f", key=f"nota_{asig2_original}")
-            
-            submitted = st.form_submit_button("Calcular Nota de Acceso")
-
-            if submitted and grado_seleccionado_calc:
-                nota_acceso_base = 0.6 * nota_bachillerato + 0.4 * nota_fase_general
-                suma_ponderaciones_especificas = 0.0
-                contribuciones_especificas = []
-
-                for asig_original, nota_materia in notas_asignaturas_elegidas.items():
-                    ponderacion_materia = ponderaciones_grado.get(asig_original, 0)
-                    if ponderacion_materia > 0 and nota_materia >= 5.0:
-                        contribucion = ponderacion_materia * nota_materia
-                        suma_ponderaciones_especificas += contribucion
-                        contribuciones_especificas.append(f"- {map_asignaturas_display[asig_original]}: Nota `{nota_materia:.1f}`, Ponderación `{ponderacion_materia:.1f}`, Aporta: `{contribucion:.3f}`")
-                    elif ponderacion_materia > 0 and nota_materia < 5.0:
-                         contribuciones_especificas.append(f"- {map_asignaturas_display[asig_original]}: Nota `{nota_materia:.1f}` (No pondera por ser < 5.0)")
+                        notas_asignaturas_elegidas[asig2_original] = st.number_input(f"Nota en {map_asignaturas_display[asig2_original]}:", min_value=0.0, max_value=10.0, value=5.0, step=0.1, format="%.1f", key=f"calc_nota_{asig2_original}")
                 
-                nota_final_acceso = nota_acceso_base + suma_ponderaciones_especificas
-                
-                st.markdown("---")
-                st.subheader(f"📈 Tu Nota de Acceso Estimada para {grado_seleccionado_calc}:")
-                st.metric(label="Nota Final (sobre 14)", value=f"{nota_final_acceso:.3f}")
+                submitted = st.form_submit_button("Calcular Nota de Acceso")
 
-                st.markdown(f"""
-                **Desglose:**
-                - Componente Bachillerato (60%): `{(0.6 * nota_bachillerato):.3f}`
-                - Componente Fase General (40%): `{(0.4 * nota_fase_general):.3f}`
-                - **Subtotal Nota Base (sobre 10): `{nota_acceso_base:.3f}`**
-                - Suma de ponderaciones de asignaturas específicas (sobre 4): `{suma_ponderaciones_especificas:.3f}`
-                """)
-                if contribuciones_especificas:
-                    st.markdown("**Detalle de asignaturas específicas consideradas:**")
-                    for detalle in contribuciones_especificas:
-                        st.markdown(detalle)
-                elif notas_asignaturas_elegidas:
-                     st.info("Ninguna de las asignaturas específicas seleccionadas y aprobadas pondera para este grado o no alcanzaron el 5.0.")
-                else:
-                    st.info("No se seleccionaron asignaturas específicas.")
-            elif submitted and not grado_seleccionado_calc:
-                st.error("Por favor, selecciona un Grado Universitario para realizar el cálculo.")
+                if submitted: # El grado ya está seleccionado si estamos aquí
+                    nota_acceso_base = 0.6 * nota_bachillerato + 0.4 * nota_fase_general
+                    suma_ponderaciones_especificas = 0.0
+                    contribuciones_especificas = []
+
+                    # Esta parte de la lógica de cálculo permanece igual
+                    for asig_original, nota_materia in notas_asignaturas_elegidas.items():
+                        ponderacion_materia = ponderaciones_grado.get(asig_original, 0)
+                        if ponderacion_materia > 0 and nota_materia >= 5.0:
+                            contribucion = ponderacion_materia * nota_materia
+                            suma_ponderaciones_especificas += contribucion
+                            contribuciones_especificas.append(f"- {map_asignaturas_display[asig_original]}: Nota `{nota_materia:.1f}`, Ponderación `{ponderacion_materia:.1f}`, Aporta: `{contribucion:.3f}`")
+                        elif ponderacion_materia > 0 and nota_materia < 5.0:
+                             contribuciones_especificas.append(f"- {map_asignaturas_display[asig_original]}: Nota `{nota_materia:.1f}` (No pondera por ser < 5.0)")
+                    
+                    nota_final_acceso = nota_acceso_base + suma_ponderaciones_especificas
+                    
+                    st.markdown("---")
+                    st.subheader(f"📈 Tu Nota de Acceso Estimada para {grado_seleccionado_calc}:")
+                    st.metric(label="Nota Final (sobre 14)", value=f"{nota_final_acceso:.3f}")
+
+                    st.markdown(f"""
+                    **Desglose:**
+                    - Componente Bachillerato (60%): `{(0.6 * nota_bachillerato):.3f}`
+                    - Componente Fase General (40%): `{(0.4 * nota_fase_general):.3f}`
+                    - **Subtotal Nota Base (sobre 10): `{nota_acceso_base:.3f}`**
+                    - Suma de ponderaciones de asignaturas específicas (sobre 4): `{suma_ponderaciones_especificas:.3f}`
+                    """)
+                    if contribuciones_especificas:
+                        st.markdown("**Detalle de asignaturas específicas consideradas:**")
+                        for detalle in contribuciones_especificas:
+                            st.markdown(detalle)
+                    elif notas_asignaturas_elegidas: # Si se eligieron asignaturas pero ninguna contribuyó
+                         st.info("Ninguna de las asignaturas específicas seleccionadas y aprobadas pondera para este grado o no alcanzaron el 5.0.")
+                    else: # Si no se eligió ninguna asignatura
+                        st.info("No se seleccionaron asignaturas específicas.")
+        else: # if not grado_seleccionado_calc (es decir, si el selectbox de grado está en 'Selecciona un grado...')
+            st.info("Por favor, selecciona un Grado Universitario para configurar la calculadora.")
 
 
-else:
+else: # if df_ponderaciones_original is None
     st.error("Error Crítico: No se pudieron cargar los datos de ponderaciones. Verifica que el archivo 'ponderaciones_andalucia.csv' existe y está en el formato correcto.")
 
 st.sidebar.markdown("---")
