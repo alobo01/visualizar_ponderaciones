@@ -457,8 +457,10 @@ if df_ponderaciones_original is not None:
     st.sidebar.markdown("<p style='text-align: center;'>IES Politécnico Sevilla</p>", unsafe_allow_html=True)
 
     if leyenda_ramas:
+        # Print leyenda_ramas with <br> replaced by newlines, but only lines NOT starting with a dash
+        
         st.sidebar.markdown("---")
-        st.sidebar.markdown(leyenda_ramas, unsafe_allow_html=True)
+        st.sidebar.markdown(leyenda_ramas.replace("\n","\n-**").replace("\n","<br>").replace(":","**:").replace("****","**"), unsafe_allow_html=True)
         st.sidebar.markdown("---")
 
     st.sidebar.header("🛠️ Opciones de Visualización")
@@ -681,13 +683,12 @@ if df_ponderaciones_original is not None:
         ]
         map_asignaturas_display = {asig: asig.replace('_', ' ').replace('.', ' ') for asig in asignaturas_ponderables_cols}
         
-        # Selector de Grado (fuera del formulario para que actualice dinámicamente el contenido)
         grado_seleccionado_calc = st.selectbox(
             "Selecciona el Grado Universitario al que quieres acceder:",
             options=[''] + sorted(df_ponderaciones_original['Grado'].unique()),
             index=0,
             format_func=lambda x: 'Selecciona un grado...' if x == '' else x,
-            key='grado_seleccionado_calculadora_main' 
+            key='grado_seleccionado_calculadora_main_reactive' 
         )
 
         if grado_seleccionado_calc:
@@ -695,86 +696,125 @@ if df_ponderaciones_original is not None:
             asignaturas_que_ponderan_para_grado = {
                 asig: ponderaciones_grado[asig] 
                 for asig in asignaturas_ponderables_cols 
-                if ponderaciones_grado.get(asig, 0) > 0 # Solo las que ponderan > 0
+                if ponderaciones_grado.get(asig, 0) > 0
             }
 
-            with st.form(key='calculadora_form_inner'):
-                col1, col2 = st.columns(2)
-                with col1:
-                    nota_bachillerato = st.number_input("Nota media de Bachillerato (sobre 10):", min_value=0.0, max_value=10.0, value=7.5, step=0.01, format="%.2f", key="calc_nota_bach")
-                with col2:
-                    nota_fase_general = st.number_input("Nota de la Fase General (EvAU/PEvAU, sobre 10):", min_value=0.0, max_value=10.0, value=7.0, step=0.01, format="%.2f", key="calc_nota_fase_gen")
+            col1, col2 = st.columns(2)
+            with col1:
+                nota_bachillerato = st.number_input("Nota media de Bachillerato (sobre 10):", min_value=0.0, max_value=10.0, value=7.5, step=0.01, format="%.2f", key="calc_nota_bach_reactive")
+            with col2:
+                nota_fase_general = st.number_input("Nota de la Fase General (EvAU/PEvAU, sobre 10):", min_value=0.0, max_value=10.0, value=7.0, step=0.01, format="%.2f", key="calc_nota_fase_gen_reactive")
+            
+            st.markdown("---")
+            st.markdown("#### Selección de Asignaturas Específicas")
+            
+            notas_especificas_validas = {} 
+
+            if not asignaturas_que_ponderan_para_grado:
+                st.warning("Este grado no tiene asignaturas específicas con ponderación > 0 en nuestros datos.")
+            else:
+                st.markdown("Selecciona **hasta 2 asignaturas** de la fase específica y sus notas (sobre 10). Solo se considerarán si la nota es >= 5.0.")
+
+                opciones_fase_especifica = {
+                    f"{map_asignaturas_display[asig]} (Pondera: {ponderacion:.1f})": asig
+                    for asig, ponderacion in sorted(asignaturas_que_ponderan_para_grado.items(), key=lambda item: item[0])
+                }
                 
-                st.markdown("---")
-                st.markdown("#### Selección de Asignaturas Específicas")
+                asig1_original_name = None
+                asig1_display = st.selectbox(
+                    "Asignatura Específica 1 (opcional):", 
+                    options=[''] + list(opciones_fase_especifica.keys()), 
+                    format_func=lambda x: 'Ninguna' if x == '' else x, 
+                    key='calc_asig1_sel_reactive'
+                )
+                if asig1_display:
+                    asig1_original_name = opciones_fase_especifica[asig1_display]
+                    nota_asig1_input = st.number_input(
+                        f"Nota en {map_asignaturas_display[asig1_original_name]}:", 
+                        min_value=0.0, max_value=10.0, value=0.0, step=0.1, format="%.1f", 
+                        key=f"calc_nota_{asig1_original_name}_reactive_s1" # Ensure unique key
+                    )
+                    if nota_asig1_input >= 5.0:
+                        notas_especificas_validas[asig1_original_name] = nota_asig1_input
                 
-                notas_asignaturas_elegidas = {}
-
-                if not asignaturas_que_ponderan_para_grado:
-                    st.warning("Este grado no tiene asignaturas específicas con ponderación > 0 en nuestros datos.")
-                else:
-                    st.markdown("Selecciona **hasta 2 asignaturas** de la fase específica y sus notas (sobre 10). Solo se considerarán si la nota es >= 5.0.")
-
-                    opciones_fase_especifica = {
-                        f"{map_asignaturas_display[asig]} (Pondera: {ponderacion:.1f})": asig # Display: internal_name
-                        for asig, ponderacion in sorted(asignaturas_que_ponderan_para_grado.items(), key=lambda item: item[0]) # Ordenar alfabéticamente
-                    }
-                    
-                    # Selectores para las dos asignaturas
-                    asig1_display = st.selectbox("Asignatura Específica 1 (opcional):", options=[''] + list(opciones_fase_especifica.keys()), format_func=lambda x: 'Ninguna' if x == '' else x, key='calc_asig1_sel')
-                    if asig1_display:
-                        asig1_original = opciones_fase_especifica[asig1_display]
-                        notas_asignaturas_elegidas[asig1_original] = st.number_input(f"Nota en {map_asignaturas_display[asig1_original]}:", min_value=0.0, max_value=10.0, value=5.0, step=0.1, format="%.1f", key=f"calc_nota_{asig1_original}")
-
-                    # Filtrar opciones para la segunda asignatura para no repetir la primera
-                    opciones_asig2 = {k:v for k,v in opciones_fase_especifica.items() if k != asig1_display} if asig1_display else opciones_fase_especifica
-                    
-                    asig2_display = st.selectbox("Asignatura Específica 2 (opcional):", options=[''] + list(opciones_asig2.keys()), format_func=lambda x: 'Ninguna' if x == '' else x, key='calc_asig2_sel')
-                    if asig2_display:
-                        asig2_original = opciones_fase_especifica[asig2_display] # Usar opciones_fase_especifica para el mapeo original
-                        notas_asignaturas_elegidas[asig2_original] = st.number_input(f"Nota en {map_asignaturas_display[asig2_original]}:", min_value=0.0, max_value=10.0, value=5.0, step=0.1, format="%.1f", key=f"calc_nota_{asig2_original}")
+                opciones_asig2_display_keys = list(opciones_fase_especifica.keys())
+                if asig1_display:
+                    opciones_asig2_display_keys = [opt for opt in opciones_asig2_display_keys if opt != asig1_display]
                 
-                submitted = st.form_submit_button("Calcular Nota de Acceso")
+                asig2_original_name = None
+                asig2_display = st.selectbox(
+                    "Asignatura Específica 2 (opcional):", 
+                    options=[''] + opciones_asig2_display_keys, 
+                    format_func=lambda x: 'Ninguna' if x == '' else x, 
+                    key='calc_asig2_sel_reactive'
+                )
+                if asig2_display:
+                    asig2_original_name = opciones_fase_especifica[asig2_display]
+                    # Ensure not to process the same subject if asig1_original_name is the same
+                    # (though UI tries to prevent this by filtering display keys)
+                    if asig1_original_name != asig2_original_name:
+                        nota_asig2_input = st.number_input(
+                            f"Nota en {map_asignaturas_display[asig2_original_name]}:", 
+                            min_value=0.0, max_value=10.0, value=0.0, step=0.1, format="%.1f", 
+                            key=f"calc_nota_{asig2_original_name}_reactive_s2" # Ensure unique key
+                        )
+                        if nota_asig2_input >= 5.0:
+                            notas_especificas_validas[asig2_original_name] = nota_asig2_input
+                    elif not asig1_original_name: # If asig1 was not selected, asig2 is fine
+                         nota_asig2_input = st.number_input(
+                            f"Nota en {map_asignaturas_display[asig2_original_name]}:", 
+                            min_value=0.0, max_value=10.0, value=0.0, step=0.1, format="%.1f", 
+                            key=f"calc_nota_{asig2_original_name}_reactive_s2_fallback" # Ensure unique key
+                        )
+                         if nota_asig2_input >= 5.0:
+                            notas_especificas_validas[asig2_original_name] = nota_asig2_input
+            
+            nota_acceso_base = 0.6 * nota_bachillerato + 0.4 * nota_fase_general
+            
+            contribuciones_especificas_calculadas = []
+            for asig_original, nota_materia in notas_especificas_validas.items():
+                ponderacion_materia = ponderaciones_grado.get(asig_original, 0)
+                contribucion = ponderacion_materia * nota_materia
+                contribuciones_especificas_calculadas.append({
+                    "name": asig_original,
+                    "grade": nota_materia,
+                    "ponderacion": ponderacion_materia,
+                    "contribution": contribucion
+                })
+            
+            contribuciones_finales = sorted(contribuciones_especificas_calculadas, key=lambda x: x["contribution"], reverse=True)[:2]
 
-                if submitted: # El grado ya está seleccionado si estamos aquí
-                    nota_acceso_base = 0.6 * nota_bachillerato + 0.4 * nota_fase_general
-                    suma_ponderaciones_especificas = 0.0
-                    contribuciones_especificas = []
+            suma_ponderaciones_especificas = 0.0
+            contribuciones_especificas_display_list = []
+            for detalle_contribucion in contribuciones_finales:
+                suma_ponderaciones_especificas += detalle_contribucion["contribution"]
+                contribuciones_especificas_display_list.append(
+                    f"- {map_asignaturas_display[detalle_contribucion['name']]}: Nota `{detalle_contribucion['grade']:.1f}`, Ponderación `{detalle_contribucion['ponderacion']:.1f}`, Aporta: `{detalle_contribucion['contribution']:.3f}`"
+                )
 
-                    # Esta parte de la lógica de cálculo permanece igual
-                    for asig_original, nota_materia in notas_asignaturas_elegidas.items():
-                        ponderacion_materia = ponderaciones_grado.get(asig_original, 0)
-                        if ponderacion_materia > 0 and nota_materia >= 5.0:
-                            contribucion = ponderacion_materia * nota_materia
-                            suma_ponderaciones_especificas += contribucion
-                            contribuciones_especificas.append(f"- {map_asignaturas_display[asig_original]}: Nota `{nota_materia:.1f}`, Ponderación `{ponderacion_materia:.1f}`, Aporta: `{contribucion:.3f}`")
-                        elif ponderacion_materia > 0 and nota_materia < 5.0:
-                             contribuciones_especificas.append(f"- {map_asignaturas_display[asig_original]}: Nota `{nota_materia:.1f}` (No pondera por ser < 5.0)")
-                    
-                    nota_final_acceso = nota_acceso_base + suma_ponderaciones_especificas
-                    
-                    st.markdown("---")
-                    st.subheader(f"📈 Tu Nota de Acceso Estimada para {grado_seleccionado_calc}:")
-                    st.metric(label="Nota Final (sobre 14)", value=f"{nota_final_acceso:.3f}")
+            nota_final_acceso = nota_acceso_base + suma_ponderaciones_especificas
+            
+            st.markdown("---")
+            st.subheader(f"📈 Tu Nota de Acceso Estimada para {grado_seleccionado_calc}:")
+            st.metric(label="Nota Final (sobre 14)", value=f"{nota_final_acceso:.3f}")
 
-                    st.markdown(f"""
-                    **Desglose:**
-                    - Componente Bachillerato (60%): `{(0.6 * nota_bachillerato):.3f}`
-                    - Componente Fase General (40%): `{(0.4 * nota_fase_general):.3f}`
-                    - **Subtotal Nota Base (sobre 10): `{nota_acceso_base:.3f}`**
-                    - Suma de ponderaciones de asignaturas específicas (sobre 4): `{suma_ponderaciones_especificas:.3f}`
-                    """)
-                    if contribuciones_especificas:
-                        st.markdown("**Detalle de asignaturas específicas consideradas:**")
-                        for detalle in contribuciones_especificas:
-                            st.markdown(detalle)
-                    elif notas_asignaturas_elegidas: # Si se eligieron asignaturas pero ninguna contribuyó
-                         st.info("Ninguna de las asignaturas específicas seleccionadas y aprobadas pondera para este grado o no alcanzaron el 5.0.")
-                    else: # Si no se eligió ninguna asignatura
-                        st.info("No se seleccionaron asignaturas específicas.")
-        else: # if not grado_seleccionado_calc (es decir, si el selectbox de grado está en 'Selecciona un grado...')
+            st.markdown(f'''
+            **Desglose:**
+            - Componente Bachillerato (60%): `{(0.6 * nota_bachillerato):.3f}`
+            - Componente Fase General (40%): `{(0.4 * nota_fase_general):.3f}`
+            - **Subtotal Nota Base (sobre 10): `{nota_acceso_base:.3f}`**
+            - Suma de ponderaciones de asignaturas específicas (sobre 4): `{suma_ponderaciones_especificas:.3f}`
+            ''')
+            if contribuciones_especificas_display_list:
+                st.markdown("**Detalle de asignaturas específicas consideradas (nota >= 5.0, se eligen las dos que más aporten):**")
+                for detalle in contribuciones_especificas_display_list:
+                    st.markdown(detalle)
+            else:
+                st.info("No se han añadido asignaturas específicas válidas (nota >= 5.0) a la nota de acceso, o las notas son < 5.0.")
+            st.caption("Recuerda: solo las asignaturas específicas con nota >= 5.0 contribuyen a la fase específica. Se eligen las dos que más aporten.")
+                        
+        else: 
             st.info("Por favor, selecciona un Grado Universitario para configurar la calculadora.")
-
 
 else: # if df_ponderaciones_original is None
     st.error("Error Crítico: No se pudieron cargar los datos de ponderaciones. Verifica que el archivo 'ponderaciones_andalucia.csv' existe y está en el formato correcto.")
