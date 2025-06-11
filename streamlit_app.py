@@ -452,6 +452,10 @@ ponderan para los grados universitarios en Andalucía.
 df_ponderaciones_original, leyenda_ramas = cargar_y_limpiar_csv(DATA_FILE) # New call
 
 if df_ponderaciones_original is not None:
+    st.sidebar.image("logo.png", use_column_width=True)
+    st.sidebar.markdown("<h5 style='text-align: center;'>Rosa María Santos Vilches</h5>", unsafe_allow_html=True)
+    st.sidebar.markdown("<p style='text-align: center;'>IES Politécnico Sevilla</p>", unsafe_allow_html=True)
+
     if leyenda_ramas:
         st.sidebar.markdown("---")
         st.sidebar.markdown(leyenda_ramas, unsafe_allow_html=True)
