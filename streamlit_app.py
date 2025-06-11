@@ -233,25 +233,29 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
         cmap = plt.cm.get_cmap('tab20', len(asignaturas_2_activas))
         color_map_2_bach = {asig: mcolors.to_hex(cmap(i)) for i, asig in enumerate(asignaturas_2_activas)}
     else:
-        color_map_2_bach = {}    for i, nodo_2 in enumerate(sorted(asignaturas_2_activas)):
-        # Colorear en rojo si es la asignatura seleccionada
-        if selected_node_id and nodo_2 == selected_node_id:
-            color = '#FF0000'  # Rojo para asignatura seleccionada
-        else:
-            color = color_map_2_bach.get(nodo_2, '#D3D3D3')
-        G.add_node(
-            nodo_2, 
-            level=1,  # Explicit level for hierarchical layout
-            layer=2, 
-            color=color + 'BF', 
-            title=nodo_2.replace('_', ' '), 
-            shape='box', 
-            type='2_bach',
-            x=None,  # Let hierarchical layout determine position
-            y=i * 80,  # Vertical spacing hint
-            fixed=False,
-            physics=False
-        )
+        color_map_2_bach = {}    
+        for i, nodo_2 in enumerate(sorted(asignaturas_2_activas)):
+            # Colorear en rojo si es la asignatura seleccionada
+            # Ensure selected_node_id is an asignatura before coloring red
+            is_selected_asignatura = selected_node_id and nodo_2 == selected_node_id and any(selected_node_id == val for val in RELACIONES_1_A_2.get(selected_node_id, [])) # Check if it's a 2nd Bach subject
+            
+            if is_selected_asignatura:
+                color = '#FF0000'  # Rojo para asignatura seleccionada
+            else:
+                color = color_map_2_bach.get(nodo_2, '#D3D3D3')
+            G.add_node(
+                nodo_2, 
+                level=1,  # Explicit level for hierarchical layout
+                layer=2, 
+                color=color + 'BF', 
+                title=nodo_2.replace('_', ' '), 
+                shape='box', 
+                type='2_bach',
+                x=None,  # Let hierarchical layout determine position
+                y=i * 80,  # Vertical spacing hint
+                fixed=False,
+                physics=False
+            )
 
     # Capa 3: Grados Universitarios (nivel 2)
     grados_en_df = sorted(df_data['Grado'].unique())
@@ -311,15 +315,17 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
             edge_color = color_base_edge
             
             # Determinar estilo de línea y grosor basado en ponderación
-            if ponderacion >= 0.19:  # 0.2
+            dashes = False # Default to solid
+
+            if ponderacion >= 0.2:
                 edge_width = 2.5
-                dashes = False
-            elif ponderacion >= 0.14:  # 0.15
-                edge_width = 2.0
-                dashes = False
-            else:  # 0.1 y superior pero menor a 0.15
-                edge_width = 1.5
-                dashes = [5, 5]  # Línea discontinua
+                # dashes remains False
+            elif ponderacion >= 0.1 and ponderacion < 0.2:  # Covers 0.1 to 0.19
+                edge_width = 1.5 # Consistent width for all dashed lines in this range
+                dashes = [5, 5]
+            else: # For ponderaciones < 0.1, if they are shown (e.g. 0.09)
+                edge_width = 1.0 # Thinner solid line for these
+                dashes = False # Not dashed as per specific request
             
             edge_title = f"{ponderacion:.2f}"
             
@@ -544,7 +550,7 @@ if df_ponderaciones_original is not None:
                 columnas_a_mostrar.extend(asignaturas_seleccionadas_tabla_cols) # Corrected from columnas_a_mantener
             elif not asignaturas_seleccionadas_tabla_display: 
                 columnas_a_mostrar.extend([col for col in df_filtrado_tabla.columns if col not in ['Grado', 'Rama_de_conocimiento']]) # Corrected from columnas_a_mantener
-
+            # Ensure this line is properly indented and on its own line
             columnas_finales_tabla = [col for col in columnas_a_mostrar if col in df_filtrado_tabla.columns]
             if 'Grado' not in columnas_finales_tabla and 'Grado' in df_filtrado_tabla.columns: 
                 columnas_finales_tabla.insert(0, 'Grado')
@@ -557,7 +563,9 @@ if df_ponderaciones_original is not None:
             elif not df_filtrado_tabla.empty:
                  st.dataframe(df_filtrado_tabla[columnas_finales_tabla], height=600) # Fallback if Grado is not indexable
             else:
-                st.info("No hay datos para mostrar con los filtros seleccionados.")        elif vista_tabla == "Asignaturas (qué grados ponderan)":
+                st.info("No hay datos para mostrar con los filtros seleccionados.")
+        
+        elif vista_tabla == "Asignaturas (qué grados ponderan)":
             st.markdown("Selecciona una o varias asignaturas de 2º Bachillerato para ver qué grados las ponderan con 0.2 (y opcionalmente 0.15 y 0.1).")
 
             asignaturas_para_analisis_display = st.multiselect(
@@ -592,7 +600,6 @@ if df_ponderaciones_original is not None:
                     ponderaciones_a_buscar.append(0.1)
                 
                 df_resultado_asignaturas = df_melted[df_melted['Ponderacion'].isin(ponderaciones_a_buscar)]
-                
                 if not df_resultado_asignaturas.empty:
                     df_resultado_asignaturas = df_resultado_asignaturas.sort_values(by=['Asignatura', 'Ponderacion', 'Grado'], ascending=[True, False, True])
                     st.dataframe(
@@ -603,11 +610,11 @@ if df_ponderaciones_original is not None:
                 else:
                     st.info("No se encontraron grados con las ponderaciones especificadas para las asignaturas seleccionadas.")
             else:
-                st.info("Por favor, selecciona al menos una asignatura para analizar.")    elif modo_visualizacion == 'Gráfico Interactivo de Flujo':
+                st.info("Por favor, selecciona al menos una asignatura para analizar.")
+    
+    elif modo_visualizacion == 'Gráfico Interactivo de Flujo':
         st.subheader("🌊 Gráfico de Flujo Académico Interactivo")
         st.markdown("""
-
-
         Selecciona una **Rama de Conocimiento**. El gráfico mostrará las conexiones con ponderación 0.2.
         Puedes optar por incluir también las de 0.15 y 0.1 (líneas discontinuas). Haz clic y arrastra los nodos para reorganizar.
         """)
@@ -641,8 +648,9 @@ if df_ponderaciones_original is not None:
         todos_grados_display = {f"{n}": n for n in sorted(nodos_grado_posibles)}
         
         # Permitir al usuario seleccionar una asignatura para filtrar/enfocar
+        st.markdown("🔴 Filtrar por <span style='color:red;'>asignatura</span> (opcional, borrar para quitar filtro):", unsafe_allow_html=True)
         asignatura_enfocada_display = st.selectbox(
-            "🔴 Filtrar por asignatura (opcional, borrar para quitar filtro):",
+            "", # Label is now part of st.markdown above
             options=[''] + list(todas_asignaturas_display.keys()),
             index=0,
             key='grafo_asignatura_enfocada',
@@ -651,8 +659,9 @@ if df_ponderaciones_original is not None:
         asignatura_enfocada_id = todas_asignaturas_display.get(asignatura_enfocada_display)
         
         # Filtro adicional por grado
+        st.markdown("🔴 Filtrar por <span style='color:red;'>grado</span> (opcional, borrar para quitar filtro):", unsafe_allow_html=True)
         grado_enfocado_display = st.selectbox(
-            "🔴 Filtrar por grado (opcional, borrar para quitar filtro):",
+            "", # Label moved to st.markdown
             options=[''] + list(todos_grados_display.keys()),
             index=0,
             key='grafo_grado_enfocado',
@@ -675,17 +684,16 @@ if df_ponderaciones_original is not None:
                 # Aplicar filtro de grados específicos si se seleccionaron
                 grados_disponibles_grafo = sorted(df_filtrado_rama_grafo['Grado'].unique())
                 grados_seleccionados_grafo = st.multiselect(
-                    "Filtrar por Grados Específicos en el gráfico (opcional):",
-                    options=grados_disponibles_grafo,
+                    "Filtrar por Grados Específicos en el gráfico (opcional):",                    options=grados_disponibles_grafo,
                     default=[],
                     key="grafo_grados_filter"
                 )
                 if grados_seleccionados_grafo:
                     df_filtrado_rama_grafo = df_filtrado_rama_grafo[df_filtrado_rama_grafo['Grado'].isin(grados_seleccionados_grafo)]
 
-
                 if df_filtrado_rama_grafo.empty and grados_seleccionados_grafo:
-                     st.warning("Ninguno de los grados específicos seleccionados se encuentra en la rama elegida o no hay datos tras el filtro.")                elif not df_filtrado_rama_grafo.empty:
+                    st.warning("Ninguno de los grados específicos seleccionados se encuentra en la rama elegida o no hay datos tras el filtro.")
+                elif not df_filtrado_rama_grafo.empty:
                     with st.spinner(f"Generando gráfico interactivo para {rama_seleccionada_grafo}..."):
                         # Pasar el nodo_enfocado_id a la función de generación
                         html_content = generar_diagrama_networkx_pyvis(
