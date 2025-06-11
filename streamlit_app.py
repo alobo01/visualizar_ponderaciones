@@ -223,8 +223,9 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
 
     # Configuración de la física para que los nodos sean arrastrables
     # nt.show_buttons(filter_=['physics']) # Muestra botones para controlar la física
-    nt.set_options("""
-    var options = {
+    # Valid JSON options string
+    options_json = """
+    {
       "physics": {
         "enabled": true,
         "barnesHut": {
@@ -236,14 +237,11 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
           "avoidOverlap": 0.1
         },
         "minVelocity": 0.75,
-        "solver": "barnesHut" 
+        "solver": "barnesHut"
       },
       "layout": {
         "hierarchical": {
-          "enabled": false, // Deshabilitar jerárquico para permitir arrastre libre
-                           // Si se quiere jerárquico LR, habilitar y configurar:
-                           // "direction": "LR", 
-                           // "sortMethod": "directed" 
+          "enabled": false
         }
       },
       "interaction":{
@@ -269,12 +267,13 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
           },
           "smooth": {
               "type": "cubicBezier",
-              "forceDirection": "horizontal", // o "vertical" o "none"
+              "forceDirection": "horizontal",
               "roundness": 0.7
           }
       }
     }
-    """)
+    """
+    nt.set_options(options_json)
     
     # Guardar en un archivo HTML temporal y luego leerlo
     # Esto es necesario porque st.components.v1.html no toma directamente el objeto nt.
