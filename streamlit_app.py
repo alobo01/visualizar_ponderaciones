@@ -50,30 +50,45 @@ def cargar_y_limpiar_csv(filepath):
         first_col_name = df.columns[0]
         if isinstance(first_col_name, str) and "Ramas de Conocimiento:" in first_col_name:
             legend_content_full = first_col_name
-            # The legend is part of the first column name, ending before "Grados"
             legend_actual_content = legend_content_full.split("Grados")[0].strip()
             
             title_part, items_part = legend_actual_content.split(":", 1)
             title = title_part.strip() + ":"
             
-            # Items are separated by \r\n in the string
-            items_list_raw = items_part.strip().split("\\r\\n") # Use escaped backslash for literal \r\n
-            if len(items_list_raw) == 1 and '\r\n' in items_list_raw[0]: # If splitting by \\r\\n failed, try \r\n
-                items_list_raw = items_part.strip().split("\r\n")
+            # Normalize various newline representations to '\\n', then split.
+            # Handles \\r\\n (as a literal string), \\r\\n (CRLF chars), \\n (LF char), \\r (CR char).
+            normalized_items_text = items_part.strip().replace("\\\\r\\\\n", "\\n").replace("\\r\\n", "\\n").replace("\\r", "\\n")
+            items_list_raw = [item.strip() for item in normalized_items_text.split('\\n') if item.strip()]
 
             formatted_items = []
-            for item_line in items_list_raw:
-                item_line_cleaned = item_line.strip()
-                if ":" in item_line_cleaned:
-                    abbrev, desc = item_line_cleaned.split(":", 1)
+            for item_line in items_list_raw: # item_line is already stripped and non-empty from the list comprehension
+                if ":" in item_line:
+                    abbrev, desc = item_line.split(":", 1)
                     formatted_items.append(f"- **{abbrev.strip()}**: {desc.strip()}")
-                elif item_line_cleaned: # Non-empty line without colon
-                    formatted_items.append(f"- {item_line_cleaned}")
+                else: # item_line is guaranteed to be a non-empty string here
+                    formatted_items.append(f"- {item_line}")
             
             if formatted_items:
-                legend_text_display = f"**{title}**\n" + "\n".join(formatted_items)
-            else: # Fallback if parsing was difficult
-                legend_text_display = f"**Leyenda Ramas:**\n{items_part.strip().replace(chr(10), '<br>').replace(chr(13), '')}"
+                legend_text_display = f"**{title}**<br>" + "<br>".join(formatted_items)
+            else: # Fallback if parsing was difficult or items_part was empty/malformed
+                processed_items_part_fb = items_part.strip()
+                # Replace all known newline variations with <br>
+                processed_items_part_fb = processed_items_part_fb.replace("\\r\\n", "<br>")
+                processed_items_part_fb = processed_items_part_fb.replace("\r\n", "<br>")
+                processed_items_part_fb = processed_items_part_fb.replace("\n", "<br>")
+                processed_items_part_fb = processed_items_part_fb.replace("\r", "<br>")
+                
+                # Clean up multiple <br> tags that might result from original multiple newlines
+                while "<br><br>" in processed_items_part_fb:
+                    processed_items_part_fb = processed_items_part_fb.replace("<br><br>", "<br>")
+                
+                # Remove leading/trailing <br> if any, after all replacements
+                if processed_items_part_fb.startswith("<br>"):
+                    processed_items_part_fb = processed_items_part_fb[4:]
+                if processed_items_part_fb.endswith("<br>"):
+                    processed_items_part_fb = processed_items_part_fb[:-4]
+                
+                legend_text_display = f"**Leyenda Ramas:**<br>{processed_items_part_fb}"
 
 
     df.rename(columns={df.columns[0]: 'Grado'}, inplace=True)
