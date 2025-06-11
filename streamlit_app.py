@@ -267,18 +267,7 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
     options_json = """
     {
       "physics": {
-        "enabled": false,
-        "hierarchicalRepulsion": {
-          "centralGravity": 0.0,
-          "springLength": 100,
-          "springConstant": 0.01,
-          "nodeDistance": 120,
-          "damping": 0.09
-        },
-        "maxVelocity": 50,
-        "minVelocity": 0.1,
-        "solver": "hierarchicalRepulsion",
-        "stabilization": {"iterations": 100}
+        "enabled": false
       },
       "layout": {
         "hierarchical": {
@@ -341,9 +330,10 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
           }
         },
         "smooth": {
-          "type": "straightCross",
+          "enabled": true,
+          "type": "cubicBezier",
           "forceDirection": "horizontal",
-          "roundness": 0.1
+          "roundness": 0.7
         },
         "color": {
           "inherit": false,
