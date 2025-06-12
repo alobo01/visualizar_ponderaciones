@@ -138,37 +138,57 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
     Permite filtrar por un nodo seleccionado.
     """
     
-    # 1. Definir Relaciones 1º -> 2º Bach (Ahora se usa la global RELACIONES_1_A_2)
-    # relaciones_1_a_2 = { ... } # Esta definición local se elimina
-
-    # Filtrar df_data si se ha seleccionado un nodo
-    # Esta es una simplificación. Una implementación completa podría requerir identificar si el nodo es
-    # de 1º Bach, 2º Bach o Grado y filtrar las conexiones relevantes.
+    # Detectar si el nodo seleccionado tiene prefijo y extraer su tipo y nombre base
+    node_type = None
+    node_base_name = None
+    
     if selected_node_id:
+        if selected_node_id.startswith("1bach_"):
+            node_type = "1bach"
+            node_base_name = selected_node_id[6:]  # Quitar "1bach_"
+        elif selected_node_id.startswith("2bach_"):
+            node_type = "2bach"
+            node_base_name = selected_node_id[6:]  # Quitar "2bach_"
+        elif selected_node_id.startswith("grado_"):
+            node_type = "grado"
+            node_base_name = selected_node_id[6:]  # Quitar "grado_"
+        else:
+            # Si no tiene prefijo, determinar el tipo por su contenido
+            if selected_node_id in RELACIONES_1_A_2:
+                node_type = "1bach"
+                node_base_name = selected_node_id
+            elif selected_node_id in df_data.columns and selected_node_id not in ['Grado', 'Rama_de_conocimiento']:
+                node_type = "2bach"
+                node_base_name = selected_node_id
+            elif selected_node_id in df_data['Grado'].unique():
+                node_type = "grado"
+                node_base_name = selected_node_id
+    
+    # Filtrar df_data según el tipo de nodo seleccionado
+    if node_type == "1bach" and node_base_name:
         # Si el nodo seleccionado es una asignatura de 1º Bach
-        if selected_node_id in RELACIONES_1_A_2: # Usar la variable global
+        if node_base_name in RELACIONES_1_A_2:
             # Mantener solo las asignaturas de 2º Bach relacionadas y los grados a los que estas conectan
-            sucesores_directos = RELACIONES_1_A_2[selected_node_id] # Usar la variable global
+            sucesores_directos = RELACIONES_1_A_2[node_base_name]
             df_data = df_data[df_data.apply(lambda row: any(row[s] > 0 for s in sucesores_directos if s in row), axis=1)]
             # Y también filtrar las columnas de asignaturas de 2º Bach a solo las sucesoras
             cols_a_mantener = ['Grado', 'Rama_de_conocimiento'] + [s for s in sucesores_directos if s in df_data.columns]
             df_data = df_data[cols_a_mantener]
-
+    elif node_type == "2bach" and node_base_name:
         # Si el nodo seleccionado es una asignatura de 2º Bach
-        elif selected_node_id in df_data.columns and selected_node_id not in ['Grado', 'Rama_de_conocimiento']:
-            df_data = df_data[df_data[selected_node_id] > 0] # Mantener solo grados donde esta asignatura pondera
+        if node_base_name in df_data.columns and node_base_name not in ['Grado', 'Rama_de_conocimiento']:
+            df_data = df_data[df_data[node_base_name] > 0] # Mantener solo grados donde esta asignatura pondera
             # Mantener solo esta asignatura de 2º Bach y los grados
-            cols_a_mantener = ['Grado', 'Rama_de_conocimiento', selected_node_id]
+            cols_a_mantener = ['Grado', 'Rama_de_conocimiento', node_base_name]
             df_data = df_data[cols_a_mantener]
-        
+    elif node_type == "grado" and node_base_name:
         # Si el nodo seleccionado es un Grado
-        elif selected_node_id in df_data['Grado'].unique():
-            df_data = df_data[df_data['Grado'] == selected_node_id] # Mantener solo este grado
-        
-        if df_data.empty:
-            st.warning(f"No se encontraron datos relevantes para el nodo seleccionado: {selected_node_id}")
-            # Podríamos devolver un grafo vacío o un mensaje
-            # For now, let it proceed, Pyvis will just show an empty graph or a very small one.
+        if node_base_name in df_data['Grado'].unique():
+            df_data = df_data[df_data['Grado'] == node_base_name] # Mantener solo este grado
+    
+    if df_data.empty and selected_node_id:
+        st.warning(f"No se encontraron datos relevantes para el nodo seleccionado: {selected_node_id}")
+        # For now, let it proceed, Pyvis will just show an empty graph or a very small one.
 
 
     # Inicializar Pyvis Network
@@ -214,8 +234,9 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
     # Añadir nodos con atributos optimizados para layout jerárquico (Sugiyama framework)
     # Capa 1: 1º Bachillerato (nivel 0)
     for i, nodo_1 in enumerate(sorted(asignaturas_1_bach_filtradas)):
+        node_id = f"1bach_{nodo_1}"  # Prefijo para nodos de 1º Bach
         G.add_node(
-            nodo_1, 
+            node_id, 
             level=0,  # Explicit level for hierarchical layout
             layer=1, 
             color='#E6E6FA', 
@@ -234,16 +255,17 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
         color_map_2_bach = {asig: mcolors.to_hex(cmap(i)) for i, asig in enumerate(asignaturas_2_activas)}
     
     for i, nodo_2 in enumerate(sorted(asignaturas_2_activas)):
+        node_id = f"2bach_{nodo_2}"  # Prefijo para nodos de 2º Bach
         # Colorear en rojo si es la asignatura seleccionada
-        # Comprobamos si el nodo actual es el seleccionado y si es una asignatura de 2º Bach
-        is_selected_asignatura = selected_node_id and nodo_2 == selected_node_id
+        # Ajustamos la comprobación para manejar el nodo seleccionado con o sin prefijo
+        is_selected_asignatura = selected_node_id and (nodo_2 == selected_node_id or f"2bach_{nodo_2}" == selected_node_id)
         
         if is_selected_asignatura:
             color = '#FF0000'  # Rojo para asignatura seleccionada
         else:
             color = color_map_2_bach.get(nodo_2, '#D3D3D3')
         G.add_node(
-            nodo_2, 
+            node_id, 
             level=1,  # Explicit level for hierarchical layout
             layer=2, 
             color=color + 'BF', 
@@ -259,8 +281,9 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
     # Capa 3: Grados Universitarios (nivel 2)
     grados_en_df = sorted(df_data['Grado'].unique())
     for i, grado_uni in enumerate(grados_en_df):
+        node_id = f"grado_{grado_uni}"  # Prefijo para nodos de grado
         G.add_node(
-            grado_uni, 
+            node_id, 
             level=2,  # Explicit level for hierarchical layout
             layer=3, 
             color='#FFDAB9', 
@@ -273,12 +296,14 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
             physics=False
         )    # Conexiones 1º Bach -> 2º Bach (optimizadas para layout jerárquico)
     for precursor, sucesores in RELACIONES_1_A_2.items(): # Usar la variable global
-        if precursor in G: # Si el nodo de 1º Bach está en el grafo
+        node_1_id = f"1bach_{precursor}"
+        if node_1_id in G: # Si el nodo de 1º Bach está en el grafo
             for sucesor in sucesores:
-                if sucesor in G: # Si el nodo de 2º Bach está en el grafo
+                node_2_id = f"2bach_{sucesor}"
+                if node_2_id in G: # Si el nodo de 2º Bach está en el grafo
                     G.add_edge(
-                        precursor, 
-                        sucesor, 
+                        node_1_id, 
+                        node_2_id, 
                         color='#6A5ACD', 
                         weight=2,
                         width=2,
@@ -294,23 +319,25 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
 
     # Agrupar conexiones por asignatura para mejor organización
     for asignatura_2 in sorted(asignaturas_2_activas):
-        if asignatura_2 not in G: continue # Si la asignatura no está en el grafo (p.ej. por filtrado de nodo)
+        node_2_id = f"2bach_{asignatura_2}"
+        if node_2_id not in G: continue # Si la asignatura no está en el grafo (p.ej. por filtrado de nodo)
         color_base_edge = color_map_2_bach.get(asignatura_2, '#808080')
         
         # Recopilar grados que van a conectar para ordenarlos
         grados_a_conectar = []
         for _, row in df_data.iterrows():
             grado = row['Grado']
-            if grado not in G: continue # Si el grado no está en el grafo
+            grado_id = f"grado_{grado}"
+            if grado_id not in G: continue # Si el grado no está en el grafo
             
             ponderacion = row.get(asignatura_2, 0.0)
             if ponderacion >= min_ponderacion_mostrar:
-                grados_a_conectar.append((grado, ponderacion))
+                grados_a_conectar.append((grado, grado_id, ponderacion))
           # Ordenar grados por ponderación (mayor primero) para minimizar cruces
-        grados_a_conectar.sort(key=lambda x: x[1], reverse=True)
+        grados_a_conectar.sort(key=lambda x: x[2], reverse=True)
         
         # Crear conexiones ordenadas
-        for grado, ponderacion in grados_a_conectar:
+        for grado, grado_id, ponderacion in grados_a_conectar:
             edge_color = color_base_edge
             
             # Determinar estilo de línea y grosor basado en ponderación
@@ -342,7 +369,7 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
             if dashes:
                 edge_properties['dashes'] = dashes
             
-            G.add_edge(asignatura_2, grado, **edge_properties)
+            G.add_edge(node_2_id, grado_id, **edge_properties)
 
     # --- Visualización con Pyvis ---
     if not G.nodes():
@@ -544,9 +571,9 @@ if df_ponderaciones_original is not None:
 
             columnas_a_mostrar = ['Grado', 'Rama_de_conocimiento']
             if asignaturas_seleccionadas_tabla_cols:
-                columnas_a_mostrar.extend(asignaturas_seleccionadas_tabla_cols) # Corrected from columnas_a_mantener
+                columnas_a_mantener.extend(asignaturas_seleccionadas_tabla_cols) # Corrected from columnas_a_mantener
             elif not asignaturas_seleccionadas_tabla_display: 
-                columnas_a_mostrar.extend([col for col in df_filtrado_tabla.columns if col not in ['Grado', 'Rama_de_conocimiento']]) # Corrected from columnas_a_mantener
+                columnas_a_mantener.extend([col for col in df_filtrado_tabla.columns if col not in ['Grado', 'Rama_de_conocimiento']]) # Corrected from columnas_a_mantener
             # Ensure this line is properly indented and on its own line
             columnas_finales_tabla = [col for col in columnas_a_mostrar if col in df_filtrado_tabla.columns]
             if 'Grado' not in columnas_finales_tabla and 'Grado' in df_filtrado_tabla.columns: 
@@ -668,7 +695,16 @@ if df_ponderaciones_original is not None:
         grado_enfocado_id = todos_grados_display.get(grado_enfocado_display)
         
         # Determinar el nodo enfocado (prioridad: asignatura > grado)
-        nodo_enfocado_id = asignatura_enfocada_id or grado_enfocado_id
+        # Modificamos para añadir prefijos apropiados dependiendo del tipo de nodo
+        nodo_enfocado_id = None
+        if asignatura_enfocada_id:
+            # Determinar si es de 1º o 2º Bach
+            if asignatura_enfocada_id in RELACIONES_1_A_2:
+                nodo_enfocado_id = f"1bach_{asignatura_enfocada_id}"
+            else:
+                nodo_enfocado_id = f"2bach_{asignatura_enfocada_id}"
+        elif grado_enfocado_id:
+            nodo_enfocado_id = f"grado_{grado_enfocado_id}"
 
 
         if rama_seleccionada_grafo:
