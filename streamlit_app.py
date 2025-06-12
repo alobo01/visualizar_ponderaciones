@@ -232,30 +232,29 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
     if asignaturas_2_activas:
         cmap = plt.cm.get_cmap('tab20', len(asignaturas_2_activas))
         color_map_2_bach = {asig: mcolors.to_hex(cmap(i)) for i, asig in enumerate(asignaturas_2_activas)}
-    else:
-        color_map_2_bach = {}    
-        for i, nodo_2 in enumerate(sorted(asignaturas_2_activas)):
-            # Colorear en rojo si es la asignatura seleccionada
-            # Ensure selected_node_id is an asignatura before coloring red
-            is_selected_asignatura = selected_node_id and nodo_2 == selected_node_id and any(selected_node_id == val for val in RELACIONES_1_A_2.get(selected_node_id, [])) # Check if it's a 2nd Bach subject
-            
-            if is_selected_asignatura:
-                color = '#FF0000'  # Rojo para asignatura seleccionada
-            else:
-                color = color_map_2_bach.get(nodo_2, '#D3D3D3')
-            G.add_node(
-                nodo_2, 
-                level=1,  # Explicit level for hierarchical layout
-                layer=2, 
-                color=color + 'BF', 
-                title=nodo_2.replace('_', ' '), 
-                shape='box', 
-                type='2_bach',
-                x=None,  # Let hierarchical layout determine position
-                y=i * 80,  # Vertical spacing hint
-                fixed=False,
-                physics=False
-            )
+    
+    for i, nodo_2 in enumerate(sorted(asignaturas_2_activas)):
+        # Colorear en rojo si es la asignatura seleccionada
+        # Comprobamos si el nodo actual es el seleccionado y si es una asignatura de 2º Bach
+        is_selected_asignatura = selected_node_id and nodo_2 == selected_node_id
+        
+        if is_selected_asignatura:
+            color = '#FF0000'  # Rojo para asignatura seleccionada
+        else:
+            color = color_map_2_bach.get(nodo_2, '#D3D3D3')
+        G.add_node(
+            nodo_2, 
+            level=1,  # Explicit level for hierarchical layout
+            layer=2, 
+            color=color + 'BF', 
+            title=nodo_2.replace('_', ' '), 
+            shape='box', 
+            type='2_bach',
+            x=None,  # Let hierarchical layout determine position
+            y=i * 80,  # Vertical spacing hint
+            fixed=False,
+            physics=False
+        )
 
     # Capa 3: Grados Universitarios (nivel 2)
     grados_en_df = sorted(df_data['Grado'].unique())
@@ -463,9 +462,7 @@ st.set_page_config(page_title="Visor Ponderaciones Selectividad Andalucía", lay
 
 st.title("📊 Visor Interactivo de Ponderaciones para Selectividad (Andalucía)")
 st.markdown("""
-
-
-Bienvenido al visor de ponderaciones. Explora cómo las asignaturas de bachillerato
+Bienvenido al visor de ponderaciones. Explora cómo las asignaturas de bachillerato 
 ponderan para los grados universitarios en Andalucía.
 """)
 
@@ -503,7 +500,7 @@ if df_ponderaciones_original is not None:
         # Radio button to switch between table views
         vista_tabla = st.radio(
             "Ver tabla por:",
-            ("Grados (vista tradicional)", "Asignaturas (qué grados ponderan)"),
+            ("Grados (vista tradicional)", "Asignaturas (qué grados las ponderan)"),
             key="vista_tabla_tipo"
         )
 
@@ -616,7 +613,7 @@ if df_ponderaciones_original is not None:
         st.subheader("🌊 Gráfico de Flujo Académico Interactivo")
         st.markdown("""
         Selecciona una **Rama de Conocimiento**. El gráfico mostrará las conexiones con ponderación 0.2.
-        Puedes optar por incluir también las de 0.15 y 0.1 (líneas discontinuas). Haz clic y arrastra los nodos para reorganizar.
+        Puedes optar por incluir también las de 0.15 y 0.1 (líneas discontinuas). Haz clic y arrastra los nodos para reorganizarlos.
         """)
         
         col_g1, col_g2, col_g3 = st.columns([2,1,1])
@@ -819,7 +816,7 @@ if df_ponderaciones_original is not None:
             nota_final_acceso = nota_acceso_base + suma_ponderaciones_especificas
             
             st.markdown("---")
-            st.subheader(f"📈 Tu Nota de Acceso Estimada para {grado_seleccionado_calc}:")
+            st.subheader(f"📈 Tu Nota de Admisión Estimada para {grado_seleccionado_calc}:")
             st.metric(label="Nota Final (sobre 14)", value=f"{nota_final_acceso:.3f}")
 
             desglose_md = f"""
@@ -836,18 +833,15 @@ if df_ponderaciones_original is not None:
                 for detalle in contribuciones_finales_seleccionadas:
                     st.markdown(f"- {map_asignaturas_display[detalle['name']]}: Nota `{detalle['grade']:.1f}`, Ponderación `{detalle['ponderacion']:.1f}`, Aporta: `{detalle['contribution']:.3f}`")
             else:
-                st.info("No se han añadido asignaturas específicas válidas (nota >= 5.0 y ponderación > 0) a la nota de acceso, o las notas son < 5.0.")
+                st.info("No se han añadido asignaturas específicas válidas (nota >= 5.0 y ponderación > 0) a la nota de admisión, o las notas son < 5.0.")
             
             st.caption("Recuerda: solo las asignaturas específicas con nota >= 5.0 contribuyen a la fase específica. Se eligen las dos que más aporten.")
-                        
-        else: 
-            st.info("Por favor, selecciona un Grado Universitario para configurar la calculadora.")
 
 else: # if df_ponderaciones_original is None
     st.error("Error Crítico: No se pudieron cargar los datos de ponderaciones. Verifica que el archivo 'ponderaciones_andalucia.csv' existe y está en el formato correcto.")
 
 st.sidebar.markdown("---")
-st.sidebar.info("Aplicación desarrollada para la visualización de ponderaciones de selectividad en Andalucía. Los datos de ponderaciones son cruciales y deben ser verificados con fuentes oficiales.")
+st.sidebar.info("Aplicación desarrollada para la visualización de ponderaciones de selectividad en Andalucía. Los datos de ponderaciones son oficiales pero te recomendamos verificarlos en las fuentes oficiales de la universidad a la que quieras acceder.")
 st.sidebar.markdown("---")
 st.sidebar.markdown("Autora: Rosa María Santos Vilches")
 st.sidebar.markdown("IES Politécnico Sevilla")
