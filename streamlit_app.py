@@ -571,9 +571,9 @@ if df_ponderaciones_original is not None:
 
             columnas_a_mostrar = ['Grado', 'Rama_de_conocimiento']
             if asignaturas_seleccionadas_tabla_cols:
-                columnas_a_mantener.extend(asignaturas_seleccionadas_tabla_cols) # Corrected from columnas_a_mantener
+                columnas_a_mostrar.extend(asignaturas_seleccionadas_tabla_cols)  # Changed from columnas_a_mantener to columnas_a_mostrar
             elif not asignaturas_seleccionadas_tabla_display: 
-                columnas_a_mantener.extend([col for col in df_filtrado_tabla.columns if col not in ['Grado', 'Rama_de_conocimiento']]) # Corrected from columnas_a_mantener
+                columnas_a_mostrar.extend([col for col in df_filtrado_tabla.columns if col not in ['Grado', 'Rama_de_conocimiento']])  # Changed from columnas_a_mantener to columnas_a_mostrar
             # Ensure this line is properly indented and on its own line
             columnas_finales_tabla = [col for col in columnas_a_mostrar if col in df_filtrado_tabla.columns]
             if 'Grado' not in columnas_finales_tabla and 'Grado' in df_filtrado_tabla.columns: 
@@ -600,11 +600,8 @@ if df_ponderaciones_original is not None:
             )
             asignaturas_para_analisis_cols = [col_original for col_original, col_display in map_asignaturas_display_tabla.items() if col_display in asignaturas_para_analisis_display]
 
-            col_015, col_01 = st.columns(2)
-            with col_015:
-                incluir_015_tabla_asignatura = st.checkbox("Incluir ponderaciones de 0.15", value=False, key="tabla_incluir_015_asignatura")
-            with col_01:
-                incluir_01_tabla_asignatura = st.checkbox("Incluir ponderaciones de 0.1", value=False, key="tabla_incluir_01_asignatura")
+            
+            incluir_01_tabla_asignatura = st.checkbox("Incluir ponderaciones de 0.1", value=False, key="tabla_incluir_01_asignatura")
 
             if asignaturas_para_analisis_cols:
                 df_melted = df_ponderaciones_original.melt(
@@ -618,8 +615,6 @@ if df_ponderaciones_original is not None:
                 df_melted['Asignatura'] = df_melted['Asignatura_Original'].map(map_asignaturas_display_tabla)
 
                 ponderaciones_a_buscar = [0.2]
-                if incluir_015_tabla_asignatura:
-                    ponderaciones_a_buscar.append(0.15)
                 if incluir_01_tabla_asignatura:
                     ponderaciones_a_buscar.append(0.1)
                 
