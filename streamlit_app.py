@@ -286,11 +286,11 @@ def generar_diagrama_networkx_pyvis(df_data, rama_filter_display_name, mostrar_p
                         smooth={'type': 'straightCross', 'forceDirection': 'horizontal'},
                         physics=False
                     )    # Conexiones 2º Bach -> Grados (optimizadas para minimizar cruces)
-    min_ponderacion_mostrar = 0.19 # Ponderación 0.2
+    min_ponderacion_mostrar = 0.19 # Por defecto, solo muestra ponderación 0.2
     if mostrar_ponderacion_01:
-        min_ponderacion_mostrar = 0.09 # Ponderación 0.1 y superior
-    elif mostrar_ponderacion_015:
-        min_ponderacion_mostrar = 0.14 # Ponderación 0.15
+        min_ponderacion_mostrar = 0.01 # Muestra todas las ponderaciones mayores que 0
+    elif mostrar_ponderacion_015:  # Mantenemos para compatibilidad, pero efectivamente se ignora
+        min_ponderacion_mostrar = 0.19 # Sigue mostrando solo 0.2
 
     # Agrupar conexiones por asignatura para mejor organización
     for asignatura_2 in sorted(asignaturas_2_activas):
@@ -613,7 +613,7 @@ if df_ponderaciones_original is not None:
         st.subheader("🌊 Gráfico de Flujo Académico Interactivo")
         st.markdown("""
         Selecciona una **Rama de Conocimiento**. El gráfico mostrará las conexiones con ponderación 0.2.
-        Puedes optar por incluir también las de 0.15 y 0.1 (líneas discontinuas). Haz clic y arrastra los nodos para reorganizarlos.
+        Puedes activar la opción "Incluir ponderación 0.1" para mostrar todas las ponderaciones.
         """)
         
         col_g1, col_g2, col_g3 = st.columns([2,1,1])
@@ -627,9 +627,10 @@ if df_ponderaciones_original is not None:
                 help="El gráfico mostrará los grados pertenecientes a esta rama."
             )
         with col_g2:
-            mostrar_015 = st.checkbox("Incluir ponderación 0.15", value=False, key='grafo_show_015')
+            # Mantenemos el checkbox pero no lo usamos activamente
+            mostrar_015 = st.checkbox("Incluir ponderación 0.15", value=False, key='grafo_show_015', disabled=True, help="Esta opción ya no se utiliza. Use 'Incluir ponderación 0.1' para mostrar todas las ponderaciones.")
         with col_g3:
-            mostrar_01 = st.checkbox("Incluir ponderación 0.1 (discontinua)", value=False, key='grafo_show_01')
+            mostrar_01 = st.checkbox("Incluir ponderación 0.1", value=False, key='grafo_show_01', help="Muestra todas las ponderaciones mayores que 0")
 
         # Filtro para seleccionar una asignatura específica para enfocar el gráfico (opcional)
         # Las opciones para este selector dependerán de la rama seleccionada
